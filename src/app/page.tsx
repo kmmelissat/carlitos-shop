@@ -194,9 +194,16 @@ const HomePage: React.FC = () => {
         <div className="relative z-10 flex items-center justify-center h-[50vh]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">
-                Welcome to CarlitosStore
-              </h1>
+              <div className="mb-4">
+                <Image
+                  src="/carlitos_large.svg"
+                  alt="Welcome to CarlitosStore"
+                  width={600}
+                  height={200}
+                  className="mx-auto drop-shadow-lg"
+                  priority
+                />
+              </div>
               <p className="text-xl md:text-2xl mb-8 text-white opacity-90 drop-shadow-md">
                 Your favorite snack store with the best products
               </p>
