@@ -1,161 +1,70 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Carousel } from "antd";
 import { ProductCard, SearchBar } from "@/components";
-import { Product, ProductCategory } from "@/types";
+import { ProductCategory } from "@/types";
+import { getProductsServer } from "@/lib/api-server";
 
-// Mock data - In production this would come from the API
-const mockProducts: Product[] = [
-  {
-    id: "1",
-    name: "Doritos Nacho Cheese",
-    description: "Delicious nachos with cheese flavor",
-    price: 2.99,
-    category: ProductCategory.CHIPS,
-    images: ["/api/placeholder/300/300"],
-    stock: 25,
-    ingredients: ["Corn", "Oil", "Cheese"],
-    allergens: ["Dairy"],
-    nutritionalInfo: {
-      calories: 150,
-      protein: 2,
-      carbs: 18,
-      fat: 8,
-      fiber: 1,
-      sugar: 1,
-      sodium: 210,
-    },
-    seller: {
-      id: "admin",
-      name: "CarlitosStore",
-      rating: 5.0,
-    },
-    rating: 4.5,
-    reviewCount: 24,
-    isActive: true,
-    featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "2",
-    name: "Oreo Original",
-    description: "Cookies with vanilla cream",
-    price: 3.49,
-    category: ProductCategory.COOKIES,
-    images: ["/api/placeholder/300/300"],
-    stock: 30,
-    ingredients: ["Flour", "Sugar", "Cream"],
-    allergens: ["Gluten", "Dairy"],
-    nutritionalInfo: {
-      calories: 160,
-      protein: 1,
-      carbs: 25,
-      fat: 7,
-      fiber: 1,
-      sugar: 14,
-      sodium: 135,
-    },
-    seller: {
-      id: "admin",
-      name: "CarlitosStore",
-      rating: 5.0,
-    },
-    rating: 4.8,
-    reviewCount: 32,
-    isActive: true,
-    featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "3",
-    name: "Haribo Gummy Bears",
-    description: "Gummy bears with fruity flavors",
-    price: 1.99,
-    category: ProductCategory.CANDY,
-    images: ["/api/placeholder/300/300"],
-    stock: 40,
-    ingredients: ["Glucose syrup", "Sugar", "Gelatin"],
-    allergens: [],
-    nutritionalInfo: {
-      calories: 140,
-      protein: 3,
-      carbs: 32,
-      fat: 0,
-      fiber: 0,
-      sugar: 22,
-      sodium: 15,
-    },
-    seller: {
-      id: "admin",
-      name: "CarlitosStore",
-      rating: 5.0,
-    },
-    rating: 4.2,
-    reviewCount: 18,
-    isActive: true,
-    featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+// This is now a Server Component that fetches real data
+const HomePage = async () => {
+  // Fetch featured products from the database
+  const allProducts = await getProductsServer();
+  const featuredProducts = allProducts
+    .filter((product) => product.featured)
+    .slice(0, 3);
 
-const categories = [
-  {
-    id: ProductCategory.CHIPS,
-    name: "Chips & Snacks",
-    icon: "🍟",
-    color: "bg-yellow-100",
-  },
-  {
-    id: ProductCategory.COOKIES,
-    name: "Cookies",
-    icon: "🍪",
-    color: "bg-amber-100",
-  },
-  {
-    id: ProductCategory.CANDY,
-    name: "Candy",
-    icon: "🍭",
-    color: "bg-pink-100",
-  },
-  {
-    id: ProductCategory.CHOCOLATE,
-    name: "Chocolate",
-    icon: "🍫",
-    color: "bg-amber-100",
-  },
-  {
-    id: ProductCategory.NUTS,
-    name: "Nuts",
-    icon: "🥜",
-    color: "bg-yellow-100",
-  },
-  {
-    id: ProductCategory.BEVERAGES,
-    name: "Beverages",
-    icon: "🥤",
-    color: "bg-blue-100",
-  },
-  {
-    id: ProductCategory.CRACKERS,
-    name: "Crackers",
-    icon: "🧀",
-    color: "bg-orange-100",
-  },
-  {
-    id: ProductCategory.POPCORN,
-    name: "Popcorn",
-    icon: "🍿",
-    color: "bg-yellow-100",
-  },
-];
+  const categories = [
+    {
+      id: ProductCategory.CHIPS,
+      name: "Chips & Snacks",
+      icon: "🍟",
+      color: "bg-yellow-100",
+    },
+    {
+      id: ProductCategory.COOKIES,
+      name: "Cookies",
+      icon: "🍪",
+      color: "bg-amber-100",
+    },
+    {
+      id: ProductCategory.CANDY,
+      name: "Candy",
+      icon: "🍭",
+      color: "bg-pink-100",
+    },
+    {
+      id: ProductCategory.CHOCOLATE,
+      name: "Chocolate",
+      icon: "🍫",
+      color: "bg-amber-100",
+    },
+    {
+      id: ProductCategory.NUTS,
+      name: "Nuts",
+      icon: "🥜",
+      color: "bg-yellow-100",
+    },
+    {
+      id: ProductCategory.BEVERAGES,
+      name: "Beverages",
+      icon: "🥤",
+      color: "bg-blue-100",
+    },
+    {
+      id: ProductCategory.CRACKERS,
+      name: "Crackers",
+      icon: "🧀",
+      color: "bg-orange-100",
+    },
+    {
+      id: ProductCategory.POPCORN,
+      name: "Popcorn",
+      icon: "🍿",
+      color: "bg-yellow-100",
+    },
+  ];
 
-const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Carousel Background */}
@@ -257,11 +166,25 @@ const HomePage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {featuredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 mb-4">
+              No featured products available at the moment.
+            </p>
+            <Link
+              href="/products"
+              className="text-orange-600 hover:text-orange-700 font-medium"
+            >
+              View all products
+            </Link>
+          </div>
+        )}
 
         <div className="text-center mt-12">
           <Link
