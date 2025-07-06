@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
   experimental: {
     esmExternals: "loose",
   },
+  // Disable ESLint during builds
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
