@@ -16,27 +16,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { addItem, isInCart, getItemQuantity } = useCart();
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevenir navegación del Link
+    e.preventDefault(); // Prevent Link navigation
     addItem(product, 1);
   };
 
   const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat("es-ES", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "EUR",
+      currency: "USD",
     }).format(price);
   };
 
   const getStockStatus = (): { text: string; color: string } => {
     if (product.stock === 0) {
-      return { text: "Agotado", color: "text-red-600" };
+      return { text: "Out of Stock", color: "text-red-600" };
     } else if (product.stock < 5) {
       return {
-        text: `Solo ${product.stock} disponibles`,
+        text: `Only ${product.stock} available`,
         color: "text-orange-600",
       };
     }
-    return { text: "Disponible", color: "text-green-600" };
+    return { text: "Available", color: "text-green-600" };
   };
 
   const stockStatus = getStockStatus();
@@ -63,14 +63,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Featured Badge */}
           {product.featured && (
             <div className="absolute top-2 left-2 bg-orange-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-              Destacado
+              Featured
             </div>
           )}
 
           {/* Stock Badge */}
           {product.stock === 0 && (
             <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-              Agotado
+              Out of Stock
             </div>
           )}
         </div>
@@ -113,7 +113,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             ))}
           </div>
           <span className="text-gray-600 text-sm ml-2">
-            {product.rating.toFixed(1)} ({product.reviewCount} reseñas)
+            {product.rating.toFixed(1)} ({product.reviewCount} reviews)
           </span>
         </div>
 
@@ -137,7 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Seller Info */}
         <div className="flex items-center mt-2">
           <span className="text-gray-500 text-sm">
-            Por {product.seller.name}
+            By {product.seller.name}
           </span>
           <div className="flex items-center ml-2">
             <svg
@@ -179,7 +179,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  En carrito ({cartQuantity})
+                  In Cart ({cartQuantity})
                 </span>
               ) : (
                 <span className="flex items-center justify-center">
@@ -196,7 +196,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.68 8.32a2 2 0 01-1.98 1.68H9m6 0v-1a2 2 0 00-2-2H9a2 2 0 00-2 2v1m6 0h6"
                     />
                   </svg>
-                  Agregar al carrito
+                  Add to Cart
                 </span>
               )}
             </button>
@@ -205,7 +205,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               disabled
               className="w-full py-2 px-4 rounded-lg font-medium bg-gray-300 text-gray-500 cursor-not-allowed"
             >
-              No disponible
+              Out of Stock
             </button>
           )}
         </div>

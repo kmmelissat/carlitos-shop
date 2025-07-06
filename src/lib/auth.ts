@@ -4,6 +4,8 @@ import {
   signOut,
   sendPasswordResetEmail,
   updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
   User as FirebaseUser,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -15,6 +17,12 @@ import {
   LoginFormData,
   UserRole,
 } from "@/types";
+
+// Configurar el proveedor de Google
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: "select_account",
+});
 
 // Registro de usuario
 export const registerUser = async (
@@ -162,4 +170,63 @@ export const convertFirebaseUser = (
     role: userData.role,
     isVerified: userData.isVerified,
   };
+};
+
+// Iniciar sesión con Google
+export const signInWithGoogle = async (): Promise<AuthUser> => {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const firebaseUser = result.user;
+
+    // Verificar si el usuario ya existe en Firestore
+    const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+
+    if (!userDoc.exists()) {
+      // Crear nuevo usuario en Firestore
+      const newUserDoc: User = {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || "",
+        name: firebaseUser.displayName || "",
+        avatar: firebaseUser.photoURL || undefined,
+        role: UserRole.USER, // Siempre USER por defecto
+        isVerified: firebaseUser.emailVerified,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      await setDoc(doc(db, "users", firebaseUser.uid), newUserDoc);
+
+      return {
+        id: firebaseUser.uid,
+        email: newUserDoc.email,
+        name: newUserDoc.name,
+        avatar: newUserDoc.avatar,
+        role: newUserDoc.role,
+        isVerified: newUserDoc.isVerified,
+      };
+    } else {
+      // Usuario existente
+      const userData = userDoc.data() as User;
+
+      // Actualizar avatar si cambió
+      if (firebaseUser.photoURL && firebaseUser.photoURL !== userData.avatar) {
+        await setDoc(doc(db, "users", firebaseUser.uid), {
+          ...userData,
+          avatar: firebaseUser.photoURL,
+          updatedAt: new Date(),
+        });
+      }
+
+      return {
+        id: firebaseUser.uid,
+        email: userData.email,
+        name: userData.name,
+        avatar: firebaseUser.photoURL || userData.avatar,
+        role: userData.role,
+        isVerified: userData.isVerified,
+      };
+    }
+  } catch (error: any) {
+    throw new Error(error.message || "Error al iniciar sesión con Google");
+  }
 };

@@ -25,7 +25,7 @@ const Navbar: React.FC = () => {
       await logout();
       router.push("/");
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
+      console.error("Error logging out:", error);
     }
   };
 
@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Buscar productos..."
+                  placeholder="Search products..."
                   className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 <button
@@ -79,7 +79,7 @@ const Navbar: React.FC = () => {
               href="/"
               className="text-gray-700 hover:text-orange-600 font-medium"
             >
-              Inicio
+              Home
             </Link>
 
             {user ? (
@@ -88,16 +88,16 @@ const Navbar: React.FC = () => {
                   href="/profile"
                   className="text-gray-700 hover:text-orange-600 font-medium"
                 >
-                  Perfil
+                  Profile
                 </Link>
 
-                {/* Solo mostrar para ADMIN */}
+                {/* Only show for ADMIN */}
                 {user.role === UserRole.ADMIN && (
                   <Link
-                    href="/admin/products"
+                    href="/admin"
                     className="text-gray-700 hover:text-orange-600 font-medium"
                   >
-                    Administrar
+                    Admin Panel
                   </Link>
                 )}
 
@@ -157,14 +157,14 @@ const Navbar: React.FC = () => {
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Mi Perfil
+                        My Profile
                       </Link>
                       <Link
                         href="/orders"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        Mis Pedidos
+                        My Orders
                       </Link>
                       {user.role === UserRole.ADMIN && (
                         <>
@@ -174,7 +174,7 @@ const Navbar: React.FC = () => {
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
                             onClick={() => setIsMenuOpen(false)}
                           >
-                            Panel Admin
+                            Admin Panel
                           </Link>
                         </>
                       )}
@@ -183,7 +183,7 @@ const Navbar: React.FC = () => {
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                       >
-                        Cerrar Sesión
+                        Sign Out
                       </button>
                     </div>
                   )}
@@ -195,13 +195,13 @@ const Navbar: React.FC = () => {
                   href="/auth/login"
                   className="text-gray-700 hover:text-orange-600 font-medium"
                 >
-                  Iniciar Sesión
+                  Sign In
                 </Link>
                 <Link
                   href="/auth/register"
                   className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
                 >
-                  Registrarse
+                  Sign Up
                 </Link>
               </>
             )}
@@ -238,7 +238,7 @@ const Navbar: React.FC = () => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Buscar productos..."
+                  placeholder="Search products..."
                   className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 <button
@@ -269,7 +269,7 @@ const Navbar: React.FC = () => {
                 className="block px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Inicio
+                Home
               </Link>
 
               {user ? (
@@ -279,16 +279,16 @@ const Navbar: React.FC = () => {
                     className="block px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Mi Perfil
+                    My Profile
                   </Link>
 
                   {user.role === UserRole.ADMIN && (
                     <Link
-                      href="/admin/products"
+                      href="/admin"
                       className="block px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Panel Admin
+                      Admin Panel
                     </Link>
                   )}
 
@@ -297,14 +297,14 @@ const Navbar: React.FC = () => {
                     className="block px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Carrito ({itemCount})
+                    Cart ({itemCount})
                   </Link>
 
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg"
                   >
-                    Cerrar Sesión
+                    Sign Out
                   </button>
                 </>
               ) : (
@@ -314,14 +314,14 @@ const Navbar: React.FC = () => {
                     className="block px-4 py-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Iniciar Sesión
+                    Sign In
                   </Link>
                   <Link
                     href="/auth/register"
                     className="block px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Registrarse
+                    Sign Up
                   </Link>
                 </>
               )}

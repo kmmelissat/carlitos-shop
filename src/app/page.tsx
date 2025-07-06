@@ -1,251 +1,391 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { Product, ProductCategory } from "@/types";
 import { ProductCard, SearchBar } from "@/components";
-import { getFeaturedProducts } from "@/lib/api";
+import { Product, ProductCategory } from "@/types";
+
+// Mock data - In production this would come from the API
+const mockProducts: Product[] = [
+  {
+    id: "1",
+    name: "Doritos Nacho Cheese",
+    description: "Delicious nachos with cheese flavor",
+    price: 2.99,
+    category: ProductCategory.CHIPS,
+    images: ["/api/placeholder/300/300"],
+    stock: 25,
+    ingredients: ["Corn", "Oil", "Cheese"],
+    allergens: ["Dairy"],
+    nutritionalInfo: {
+      calories: 150,
+      protein: 2,
+      carbs: 18,
+      fat: 8,
+      fiber: 1,
+      sugar: 1,
+      sodium: 210,
+    },
+    seller: {
+      id: "admin",
+      name: "CarlitosStore",
+      rating: 5.0,
+    },
+    rating: 4.5,
+    reviewCount: 24,
+    isActive: true,
+    featured: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "2",
+    name: "Oreo Original",
+    description: "Cookies with vanilla cream",
+    price: 3.49,
+    category: ProductCategory.COOKIES,
+    images: ["/api/placeholder/300/300"],
+    stock: 30,
+    ingredients: ["Flour", "Sugar", "Cream"],
+    allergens: ["Gluten", "Dairy"],
+    nutritionalInfo: {
+      calories: 160,
+      protein: 1,
+      carbs: 25,
+      fat: 7,
+      fiber: 1,
+      sugar: 14,
+      sodium: 135,
+    },
+    seller: {
+      id: "admin",
+      name: "CarlitosStore",
+      rating: 5.0,
+    },
+    rating: 4.8,
+    reviewCount: 32,
+    isActive: true,
+    featured: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "3",
+    name: "Haribo Gummy Bears",
+    description: "Gummy bears with fruity flavors",
+    price: 1.99,
+    category: ProductCategory.CANDY,
+    images: ["/api/placeholder/300/300"],
+    stock: 40,
+    ingredients: ["Glucose syrup", "Sugar", "Gelatin"],
+    allergens: [],
+    nutritionalInfo: {
+      calories: 140,
+      protein: 3,
+      carbs: 32,
+      fat: 0,
+      fiber: 0,
+      sugar: 22,
+      sodium: 15,
+    },
+    seller: {
+      id: "admin",
+      name: "CarlitosStore",
+      rating: 5.0,
+    },
+    rating: 4.2,
+    reviewCount: 18,
+    isActive: true,
+    featured: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+const categories = [
+  {
+    id: ProductCategory.CHIPS,
+    name: "Chips & Snacks",
+    icon: "🍟",
+    color: "bg-yellow-100",
+  },
+  {
+    id: ProductCategory.COOKIES,
+    name: "Cookies",
+    icon: "🍪",
+    color: "bg-amber-100",
+  },
+  {
+    id: ProductCategory.CANDY,
+    name: "Candy",
+    icon: "🍭",
+    color: "bg-pink-100",
+  },
+  {
+    id: ProductCategory.CHOCOLATE,
+    name: "Chocolate",
+    icon: "🍫",
+    color: "bg-amber-100",
+  },
+  {
+    id: ProductCategory.NUTS,
+    name: "Nuts",
+    icon: "🥜",
+    color: "bg-yellow-100",
+  },
+  {
+    id: ProductCategory.BEVERAGES,
+    name: "Beverages",
+    icon: "🥤",
+    color: "bg-blue-100",
+  },
+  {
+    id: ProductCategory.CRACKERS,
+    name: "Crackers",
+    icon: "🧀",
+    color: "bg-orange-100",
+  },
+  {
+    id: ProductCategory.POPCORN,
+    name: "Popcorn",
+    icon: "🍿",
+    color: "bg-yellow-100",
+  },
+];
 
 const HomePage: React.FC = () => {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadFeaturedProducts = async () => {
-      try {
-        const products = await getFeaturedProducts();
-        setFeaturedProducts(products);
-      } catch (err: any) {
-        setError(err.message || "Error al cargar productos destacados");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadFeaturedProducts();
-  }, []);
-
-  const categories = [
-    { name: "Papas fritas", value: ProductCategory.CHIPS, emoji: "🍟" },
-    { name: "Galletas", value: ProductCategory.COOKIES, emoji: "🍪" },
-    { name: "Dulces", value: ProductCategory.CANDY, emoji: "🍬" },
-    { name: "Frutos secos", value: ProductCategory.NUTS, emoji: "🥜" },
-    { name: "Chocolate", value: ProductCategory.CHOCOLATE, emoji: "🍫" },
-    { name: "Palomitas", value: ProductCategory.POPCORN, emoji: "🍿" },
-    { name: "Saludable", value: ProductCategory.HEALTHY, emoji: "🥗" },
-    { name: "Bebidas", value: ProductCategory.BEVERAGES, emoji: "🥤" },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
+      <div className="bg-gradient-to-r from-orange-600 to-orange-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              🍿 Bienvenido a SnackHub
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              Welcome to CarlitosStore
             </h1>
-            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-              Descubre los mejores snacks, dulces y bebidas de vendedores
-              locales. Tu marketplace favorito para satisfacer todos tus
-              antojos.
+            <p className="text-xl md:text-2xl mb-8 opacity-90">
+              Your favorite snack store with the best products
             </p>
-
-            {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
-              <SearchBar showFilters={true} className="mb-6" />
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/products"
-                className="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-              >
-                Ver todos los productos
-              </Link>
-              <Link
-                href="/auth/register"
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-orange-600 transition-colors"
-              >
-                Únete como vendedor
-              </Link>
+              <SearchBar />
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Categories Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Explora por categorías
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Explore our categories
           </h2>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-            {categories.map((category) => (
-              <Link
-                key={category.value}
-                href={`/search?category=${category.value}`}
-                className="flex flex-col items-center p-6 bg-gray-50 rounded-lg hover:bg-orange-50 hover:shadow-md transition-all group"
-              >
-                <span className="text-4xl mb-3 group-hover:scale-110 transition-transform">
-                  {category.emoji}
-                </span>
-                <span className="text-sm font-medium text-gray-700 group-hover:text-orange-600 text-center">
-                  {category.name}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Products Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Productos destacados
-            </h2>
-            <Link
-              href="/products?featured=true"
-              className="text-orange-600 hover:text-orange-700 font-medium"
-            >
-              Ver todos →
-            </Link>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-lg shadow-md animate-pulse"
-                >
-                  <div className="aspect-square bg-gray-300"></div>
-                  <div className="p-4 space-y-3">
-                    <div className="h-4 bg-gray-300 rounded"></div>
-                    <div className="h-3 bg-gray-300 rounded w-3/4"></div>
-                    <div className="h-6 bg-gray-300 rounded w-1/2"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <div className="text-gray-500 mb-4">
-                <svg
-                  className="w-16 h-16 mx-auto"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Error al cargar productos
-              </h3>
-              <p className="text-gray-500">{error}</p>
-            </div>
-          ) : featuredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-gray-500 mb-4">
-                <svg
-                  className="w-16 h-16 mx-auto"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No hay productos destacados
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Sé el primero en agregar productos al marketplace
-              </p>
-              <Link
-                href="/products/new"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700"
-              >
-                Agregar producto
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-orange-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            ¿Tienes productos deliciosos para vender?
-          </h2>
-          <p className="text-xl text-orange-100 mb-8 max-w-2xl mx-auto">
-            Únete a nuestra comunidad de vendedores y comparte tus snacks
-            favoritos con miles de compradores.
+          <p className="text-gray-600">
+            Find your favorite snacks organized by categories
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {categories.map((category) => (
             <Link
-              href="/auth/register"
-              className="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              key={category.id}
+              href={`/products?category=${category.id}`}
+              className="group p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200"
             >
-              Registrarse como vendedor
+              <div
+                className={`w-16 h-16 ${category.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}
+              >
+                <span className="text-2xl">{category.icon}</span>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-center">
+                {category.name}
+              </h3>
             </Link>
-            <Link
-              href="/seller-guide"
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-orange-600 transition-colors"
+          ))}
+        </div>
+      </div>
+
+      {/* Featured Products */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Featured products
+          </h2>
+          <p className="text-gray-600">
+            The most popular snacks at CarlitosStore
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {mockProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <Link
+            href="/products"
+            className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors duration-200"
+          >
+            View all products
+            <svg
+              className="ml-2 -mr-1 w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Guía del vendedor
-            </Link>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </Link>
+        </div>
+      </div>
+
+      {/* Why Choose Us */}
+      <div className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Why choose CarlitosStore?
+            </h2>
+            <p className="text-gray-600">We are your trusted snack store</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-orange-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Guaranteed quality
+              </h3>
+              <p className="text-gray-600">
+                All our products are carefully selected for their quality
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-orange-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Fast delivery
+              </h3>
+              <p className="text-gray-600">
+                Get your favorite snacks in record time
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-8 h-8 text-orange-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Competitive prices
+              </h3>
+              <p className="text-gray-600">
+                The best prices on all our products
+              </p>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Newsletter */}
+      <div className="bg-orange-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Stay up to date with CarlitosStore
+          </h2>
+          <p className="text-xl mb-8 opacity-90">
+            Subscribe and receive exclusive offers and news
+          </p>
+          <div className="max-w-md mx-auto">
+            <form className="flex">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-3 rounded-l-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-300"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-orange-800 text-white rounded-r-lg hover:bg-orange-900 transition-colors duration-200"
+              >
+                Subscribe
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <div className="bg-gray-100 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-orange-600 mb-2">
-                1,000+
-              </div>
-              <div className="text-gray-600">Productos disponibles</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-orange-600 mb-2">
+              <div className="text-3xl font-bold text-orange-600 mb-2">
                 500+
               </div>
-              <div className="text-gray-600">Vendedores activos</div>
+              <div className="text-gray-600">Available products</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-orange-600 mb-2">
-                10,000+
+              <div className="text-3xl font-bold text-orange-600 mb-2">
+                1000+
               </div>
-              <div className="text-gray-600">Clientes satisfechos</div>
+              <div className="text-gray-600">Satisfied customers</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-orange-600 mb-2">
+                24/7
+              </div>
+              <div className="text-gray-600">Customer support</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-orange-600 mb-2">99%</div>
+              <div className="text-gray-600">Satisfaction guaranteed</div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

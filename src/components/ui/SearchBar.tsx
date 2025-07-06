@@ -89,7 +89,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar snacks, dulces, bebidas..."
+            placeholder="Search snacks, candy, beverages..."
             className="w-full px-4 py-3 pr-20 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
           />
 
@@ -99,7 +99,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 type="button"
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                 className="p-2 text-gray-400 hover:text-orange-600 transition-colors"
-                title="Filtros avanzados"
+                title="Advanced filters"
               >
                 <svg
                   className="w-5 h-5"
@@ -139,43 +139,41 @@ const SearchBar: React.FC<SearchBarProps> = ({
         </div>
       </form>
 
-      {/* Filtros Avanzados */}
+      {/* Advanced Filters */}
       {showFilters && showAdvancedFilters && (
         <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Categoría */}
+            {/* Category */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Categoría
+                Category
               </label>
               <select
                 value={filters.category}
                 onChange={(e) => handleFilterChange("category", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
               >
-                <option value="">Todas las categorías</option>
-                <option value={ProductCategory.CHIPS}>Papas fritas</option>
-                <option value={ProductCategory.COOKIES}>Galletas</option>
-                <option value={ProductCategory.CANDY}>Dulces</option>
-                <option value={ProductCategory.NUTS}>Frutos secos</option>
+                <option value="">All categories</option>
+                <option value={ProductCategory.CHIPS}>Chips</option>
+                <option value={ProductCategory.COOKIES}>Cookies</option>
+                <option value={ProductCategory.CANDY}>Candy</option>
+                <option value={ProductCategory.NUTS}>Nuts</option>
                 <option value={ProductCategory.CHOCOLATE}>Chocolate</option>
-                <option value={ProductCategory.CRACKERS}>
-                  Galletas saladas
-                </option>
-                <option value={ProductCategory.POPCORN}>Palomitas</option>
+                <option value={ProductCategory.CRACKERS}>Crackers</option>
+                <option value={ProductCategory.POPCORN}>Popcorn</option>
                 <option value={ProductCategory.DRIED_FRUITS}>
-                  Frutos secos
+                  Dried fruits
                 </option>
-                <option value={ProductCategory.HEALTHY}>Saludable</option>
-                <option value={ProductCategory.BEVERAGES}>Bebidas</option>
-                <option value={ProductCategory.OTHER}>Otros</option>
+                <option value={ProductCategory.HEALTHY}>Healthy</option>
+                <option value={ProductCategory.BEVERAGES}>Beverages</option>
+                <option value={ProductCategory.OTHER}>Other</option>
               </select>
             </div>
 
-            {/* Precio mínimo */}
+            {/* Minimum price */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Precio mínimo (€)
+                Minimum price (€)
               </label>
               <input
                 type="number"
@@ -188,10 +186,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
               />
             </div>
 
-            {/* Precio máximo */}
+            {/* Maximum price */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Precio máximo (€)
+                Maximum price (€)
               </label>
               <input
                 type="number"
@@ -204,7 +202,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               />
             </div>
 
-            {/* Solo en stock */}
+            {/* In stock only */}
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -219,19 +217,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 htmlFor="inStock"
                 className="ml-2 block text-sm text-gray-700"
               >
-                Solo productos en stock
+                Only products in stock
               </label>
             </div>
           </div>
 
-          {/* Botones de acción */}
+          {/* Action buttons */}
           <div className="flex justify-between items-center mt-4">
             <button
               type="button"
               onClick={clearFilters}
               className="text-sm text-gray-600 hover:text-gray-800 underline"
             >
-              Limpiar filtros
+              Clear filters
             </button>
 
             <button
@@ -239,13 +237,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
               onClick={handleSearch}
               className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm"
             >
-              Aplicar filtros
+              Apply filters
             </button>
           </div>
         </div>
       )}
 
-      {/* Filtros activos */}
+      {/* Active filters */}
       {(filters.category ||
         filters.minPrice ||
         filters.maxPrice ||
@@ -266,7 +264,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           {filters.minPrice && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
-              Desde €{filters.minPrice}
+              From €{filters.minPrice}
               <button
                 type="button"
                 onClick={() => handleFilterChange("minPrice", "")}
@@ -279,7 +277,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           {filters.maxPrice && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
-              Hasta €{filters.maxPrice}
+              Up to €{filters.maxPrice}
               <button
                 type="button"
                 onClick={() => handleFilterChange("maxPrice", "")}
@@ -292,7 +290,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           {filters.inStock && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
-              En stock
+              In stock
               <button
                 type="button"
                 onClick={() => handleFilterChange("inStock", false)}

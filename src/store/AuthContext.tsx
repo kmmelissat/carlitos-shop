@@ -11,7 +11,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { getCurrentUser } from "@/lib/auth";
 import { AuthState, AuthUser, LoginFormData, RegisterFormData } from "@/types";
-import { loginUser, registerUser, logoutUser } from "@/lib/auth";
+import {
+  loginUser,
+  registerUser,
+  logoutUser,
+  signInWithGoogle,
+} from "@/lib/auth";
 
 // Tipos para actions
 type AuthAction =
@@ -47,6 +52,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 interface AuthContextType extends AuthState {
   login: (credentials: LoginFormData) => Promise<void>;
   register: (userData: RegisterFormData) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -107,6 +113,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginWithGoogle = async (): Promise<void> => {
+    try {
+      dispatch({ type: "SET_LOADING", payload: true });
+      dispatch({ type: "CLEAR_ERROR" });
+
+      const user = await signInWithGoogle();
+      dispatch({ type: "SET_USER", payload: user });
+    } catch (error: any) {
+      dispatch({ type: "SET_ERROR", payload: error.message });
+      throw error;
+    }
+  };
+
   const logout = async (): Promise<void> => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
@@ -125,6 +144,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     ...state,
     login,
     register,
+    loginWithGoogle,
     logout,
     clearError,
   };
