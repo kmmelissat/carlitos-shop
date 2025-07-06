@@ -1,22 +1,29 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth, useCart } from "@/store";
 import { UserRole, AuthUser } from "@/types";
 
-interface NavbarProps {
+interface ServerNavbarProps {
+  serverUser: AuthUser | null;
   className?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ className }) => {
-  const { user, loading, logout } = useAuth();
+const ServerNavbar: React.FC<ServerNavbarProps> = ({
+  serverUser,
+  className,
+}) => {
+  const { user, logout } = useAuth();
   const { itemCount } = useCart();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Use client user if available, otherwise use server user (no loading state needed)
+  const currentUser = user || serverUser;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,12 +105,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               Home
             </Link>
 
-            {loading ? (
-              // Show loading state - just empty space or minimal loading indicator
-              <div className="flex items-center space-x-4">
-                <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
-              </div>
-            ) : user ? (
+            {currentUser ? (
               <>
                 <Link
                   href="/profile"
@@ -113,7 +115,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 </Link>
 
                 {/* Only show for ADMIN */}
-                {user.role === UserRole.ADMIN && (
+                {currentUser.role === UserRole.ADMIN && (
                   <Link
                     href="/admin"
                     className="text-gray-700 hover:text-orange-600 font-medium"
@@ -154,8 +156,8 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                     className="flex items-center space-x-2 text-gray-700 hover:text-orange-600"
                   >
                     <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                      {user.name?.charAt(0).toUpperCase() ||
-                        user.email?.charAt(0).toUpperCase() ||
+                      {currentUser.name?.charAt(0).toUpperCase() ||
+                        currentUser.email?.charAt(0).toUpperCase() ||
                         "U"}
                     </div>
                     <svg
@@ -189,7 +191,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                       >
                         My Orders
                       </Link>
-                      {user.role === UserRole.ADMIN && (
+                      {currentUser.role === UserRole.ADMIN && (
                         <>
                           <hr className="my-1" />
                           <Link
@@ -296,12 +298,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 Home
               </Link>
 
-              {loading ? (
-                // Show loading state in mobile menu
-                <div className="px-3 py-2">
-                  <div className="w-full h-8 rounded bg-gray-200 animate-pulse"></div>
-                </div>
-              ) : user ? (
+              {currentUser ? (
                 <>
                   <Link
                     href="/profile"
@@ -317,7 +314,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                   >
                     Cart {itemCount > 0 && `(${itemCount})`}
                   </Link>
-                  {user.role === UserRole.ADMIN && (
+                  {currentUser.role === UserRole.ADMIN && (
                     <Link
                       href="/admin"
                       className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600"
@@ -359,4 +356,4 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
   );
 };
 
-export default Navbar;
+export default ServerNavbar;

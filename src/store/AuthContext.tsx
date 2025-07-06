@@ -25,13 +25,6 @@ type AuthAction =
   | { type: "SET_ERROR"; payload: string | null }
   | { type: "CLEAR_ERROR" };
 
-// Estado inicial
-const initialState: AuthState = {
-  user: null,
-  loading: true,
-  error: null,
-};
-
 // Reducer
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -62,9 +55,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Provider
 interface AuthProviderProps {
   children: ReactNode;
+  serverUser?: AuthUser | null;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({
+  children,
+  serverUser,
+}) => {
+  // Initialize state with server user data
+  const initialState: AuthState = {
+    user: serverUser || null,
+    loading: serverUser ? false : true,
+    error: null,
+  };
+
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   // Escuchar cambios en la autenticación
@@ -75,7 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           // Store the ID token in a cookie for server-side verification
           const idToken = await firebaseUser.getIdToken();
           document.cookie = `firebase-id-token=${idToken}; path=/; secure; samesite=strict; max-age=3600`;
-          
+
           const user = await getCurrentUser();
           dispatch({ type: "SET_USER", payload: user });
         } catch (error) {
@@ -84,7 +88,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       } else {
         // Clear the cookie when user logs out
-        document.cookie = "firebase-id-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie =
+          "firebase-id-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         dispatch({ type: "SET_USER", payload: null });
       }
     });

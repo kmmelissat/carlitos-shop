@@ -1,6 +1,7 @@
 // Layout Components
 export { default as Navbar } from "./layout/Navbar";
 export { default as Footer } from "./layout/Footer";
+export { default as ClientWrapper } from "./layout/ClientWrapper";
 
 // UI Components
 export { default as ProductCard } from "./ui/ProductCard";

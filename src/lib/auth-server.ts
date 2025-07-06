@@ -20,7 +20,7 @@ const db = admin.firestore();
 
 export const verifyAuthToken = async (): Promise<AuthUser | null> => {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const idToken = cookieStore.get("firebase-id-token")?.value;
 
     if (!idToken) {
@@ -40,11 +40,12 @@ export const verifyAuthToken = async (): Promise<AuthUser | null> => {
     const userData = userDoc.data()!;
 
     return {
-      uid: decodedToken.uid,
+      id: decodedToken.uid,
       email: decodedToken.email || "",
-      displayName: decodedToken.name || userData.displayName || "",
+      name: decodedToken.name || userData.displayName || "",
       role: userData.role || UserRole.USER,
-      createdAt: userData.createdAt?.toDate() || new Date(),
+      isVerified: decodedToken.email_verified || false,
+      avatar: userData.avatar || undefined,
     };
   } catch (error) {
     console.error("Error verifying auth token:", error);
