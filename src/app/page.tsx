@@ -159,7 +159,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Carousel Background */}
-      <div className="relative h-[70vh]">
+      <div className="relative h-[50vh]">
         {/* Carousel Background */}
         <div className="absolute inset-0 z-0">
           <Carousel
@@ -168,7 +168,7 @@ const HomePage: React.FC = () => {
             dots={true}
             className="h-full"
           >
-            <div className="relative h-[70vh]">
+            <div className="relative h-[50vh]">
               <Image
                 src="/esen-1.jpg"
                 alt="ESEN Campus - Image 1"
@@ -178,7 +178,7 @@ const HomePage: React.FC = () => {
               />
               <div className="absolute inset-0 bg-black bg-opacity-40"></div>
             </div>
-            <div className="relative h-[70vh]">
+            <div className="relative h-[50vh]">
               <Image
                 src="/esen-2.jpg"
                 alt="ESEN Campus - Image 2"
@@ -191,7 +191,7 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Static Content Overlay */}
-        <div className="relative z-10 flex items-center justify-center h-[70vh]">
+        <div className="relative z-10 flex items-center justify-center h-[50vh]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="text-center">
               <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">
