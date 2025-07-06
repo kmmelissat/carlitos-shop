@@ -59,3 +59,27 @@ body {
   font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
+/* Ant Design Carousel Styling */
+.ant-carousel .slick-dots {
+  bottom: 40px;
+  z-index: 20;
+}
+
+.ant-carousel .slick-dots li button {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  background-color: white;
+  border-color: white;
+}
+
+.ant-carousel .slick-dots li:hover button {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: white;
+}

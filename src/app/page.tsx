@@ -2,6 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { Carousel } from "antd";
 import { ProductCard, SearchBar } from "@/components";
 import { Product, ProductCategory } from "@/types";
 
@@ -156,18 +158,51 @@ const categories = [
 const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-orange-600 to-orange-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">
-              Welcome to CarlitosStore
-            </h1>
-            <p className="text-xl md:text-2xl mb-8 opacity-90">
-              Your favorite snack store with the best products
-            </p>
-            <div className="max-w-2xl mx-auto">
-              <SearchBar />
+      {/* Hero Section with Carousel Background */}
+      <div className="relative h-[70vh]">
+        {/* Carousel Background */}
+        <div className="absolute inset-0 z-0">
+          <Carousel
+            autoplay
+            autoplaySpeed={2000}
+            dots={true}
+            className="h-full"
+          >
+            <div className="relative h-[70vh]">
+              <Image
+                src="/esen-1.jpg"
+                alt="ESEN Campus - Image 1"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+            </div>
+            <div className="relative h-[70vh]">
+              <Image
+                src="/esen-2.jpg"
+                alt="ESEN Campus - Image 2"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+            </div>
+          </Carousel>
+        </div>
+
+        {/* Static Content Overlay */}
+        <div className="relative z-10 flex items-center justify-center h-[70vh]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="text-center">
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">
+                Welcome to CarlitosStore
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 text-white opacity-90 drop-shadow-md">
+                Your favorite snack store with the best products
+              </p>
+              <div className="max-w-2xl mx-auto">
+                <SearchBar />
+              </div>
             </div>
           </div>
         </div>
