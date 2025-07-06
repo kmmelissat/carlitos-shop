@@ -72,6 +72,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
+          // Store the ID token in a cookie for server-side verification
+          const idToken = await firebaseUser.getIdToken();
+          document.cookie = `firebase-id-token=${idToken}; path=/; secure; samesite=strict; max-age=3600`;
+          
           const user = await getCurrentUser();
           dispatch({ type: "SET_USER", payload: user });
         } catch (error) {
@@ -79,6 +83,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           dispatch({ type: "SET_USER", payload: null });
         }
       } else {
+        // Clear the cookie when user logs out
+        document.cookie = "firebase-id-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         dispatch({ type: "SET_USER", payload: null });
       }
     });

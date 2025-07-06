@@ -22,6 +22,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [imageUrlError, setImageUrlError] = useState("");
   const [formData, setFormData] = useState<ProductFormData>({
     name: initialData?.name || "",
     description: initialData?.description || "",
@@ -49,14 +50,68 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }));
   };
 
-  const handleAddImageUrl = () => {
-    if (newImageUrl.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, newImageUrl.trim()],
-      }));
-      setNewImageUrl("");
+  const isValidImageUrl = (url: string): boolean => {
+    // Check if URL is valid
+    try {
+      new URL(url);
+    } catch {
+      return false;
     }
+
+    // Check if URL ends with common image extensions
+    const imageExtensions = [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".gif",
+      ".webp",
+      ".bmp",
+      ".svg",
+    ];
+    const lowercaseUrl = url.toLowerCase();
+
+    // Check for direct image URLs
+    if (imageExtensions.some((ext) => lowercaseUrl.includes(ext))) {
+      return true;
+    }
+
+    // Check for common image hosting patterns
+    const imageHostPatterns = [
+      "imgur.com",
+      "unsplash.com",
+      "pexels.com",
+      "pixabay.com",
+      "cloudinary.com",
+      "amazonaws.com",
+      "googleusercontent.com",
+    ];
+
+    return imageHostPatterns.some((pattern) => lowercaseUrl.includes(pattern));
+  };
+
+  const handleAddImageUrl = () => {
+    const trimmedUrl = newImageUrl.trim();
+
+    if (!trimmedUrl) {
+      setImageUrlError("Please enter an image URL");
+      return;
+    }
+
+    if (!isValidImageUrl(trimmedUrl)) {
+      setImageUrlError(
+        "Please enter a valid image URL (must end with .jpg, .png, .gif, .webp, etc. or be from a known image hosting service)"
+      );
+      return;
+    }
+
+    // Clear any previous error
+    setImageUrlError("");
+
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, trimmedUrl],
+    }));
+    setNewImageUrl("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,6 +145,19 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
     if (!isEdit && formData.images.length === 0) {
       setError("You must add at least one image URL");
+      return;
+    }
+
+    // Validate all image URLs
+    const invalidImages = formData.images.filter(
+      (url) => !isValidImageUrl(url)
+    );
+    if (invalidImages.length > 0) {
+      setError(
+        `Some image URLs are invalid: ${invalidImages.slice(0, 2).join(", ")}${
+          invalidImages.length > 2 ? "..." : ""
+        }`
+      );
       return;
     }
 
@@ -350,15 +418,22 @@ const ProductForm: React.FC<ProductFormProps> = ({
           >
             Product Images {!isEdit && "*"}
           </label>
+          <p className="text-xs text-gray-500 mb-2">
+            Only direct image URLs are accepted (.jpg, .png, .gif, .webp, etc.)
+            or links from image hosting services like Unsplash, Imgur, etc.
+          </p>
           <div className="flex gap-2 mb-4">
             <input
               type="url"
               id="newImageUrl"
               name="newImageUrl"
               value={newImageUrl}
-              onChange={(e) => setNewImageUrl(e.target.value)}
+              onChange={(e) => {
+                setNewImageUrl(e.target.value);
+                setImageUrlError(""); // Clear error when user types
+              }}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="Paste image URL here (e.g. https://example.com/image.jpg)"
+              placeholder="Paste direct image URL here (e.g. https://example.com/image.jpg)"
             />
             <button
               type="button"
@@ -368,6 +443,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
               Add Image
             </button>
           </div>
+
+          {imageUrlError && (
+            <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{imageUrlError}</p>
+            </div>
+          )}
 
           {formData.images.length > 0 && (
             <div className="mt-4">
@@ -389,8 +470,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
                           "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNiAyMEgyNE0yMCAxNlYyNE0xMiAyMEM4LjY4NjI5IDIwIDYgMTcuMzEzNyA2IDE0QzYgMTAuNjg2MyA4LjY4NjI5IDggMTIgOEMyOCA4IDI4IDggMjggOEMzMS4zMTM3IDggMzQgMTAuNjg2MyAzNCAxNEMzNCAx 3LjMxMzcgMzEuMzEzNyAyMCAyOCAyMEgyNE0yMCAyOEMxNy4yMzg2IDI4IDE1IDI1Ljc2MTQgMTUgMjNWMjBIMjVWMjNDMjUgMjUuNzYxNCAyMi43NjE0IDI4IDIwIDI4WiIgc3Ryb2tlPSIjOTlBMUFBIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=";
                       }}
                     />
-                    <div className="flex-1">
-                      <p className="text-xs text-gray-600 break-all">
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-xs text-gray-600 truncate"
+                        title={imageUrl}
+                      >
                         {imageUrl}
                       </p>
                     </div>

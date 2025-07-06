@@ -8,3 +8,7 @@ export { default as SearchBar } from "./ui/SearchBar";
 
 // Form Components
 export { default as ProductForm } from "./forms/ProductForm";
+
+// Admin components
+export { default as AdminGuard } from "./admin/AdminGuard";
+export { default as ProductsTable } from "./admin/ProductsTable";

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth, useCart } from "@/store";
 import { UserRole } from "@/types";
@@ -31,13 +32,20 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="bg-white shadow-lg border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-24">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-orange-600">
-              🛒 CarlitosStore
-            </div>
+          <Link href="/" className="flex items-center space-x-4">
+            <Image
+              src="/carlitos-logo.svg"
+              alt="Carlitos Store"
+              width={160}
+              height={160}
+              className="h-16 w-auto"
+            />
+            <span className="text-2xl font-bold text-[#09112A] hidden sm:block">
+              Carlito's ESEN
+            </span>
           </Link>
 
           {/* Search Bar - Desktop */}

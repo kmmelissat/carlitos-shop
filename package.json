@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "make-admin": "node scripts/make-me-admin.js"
+    "make-admin": "node scripts/make-me-admin.js",
+    "add-sample-products": "node scripts/add-sample-products.js"
   },
   "dependencies": {
     "antd": "^5.26.3",
