@@ -13,8 +13,7 @@ import {
   startAfter,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "./firebase";
+import { db } from "./firebase";
 import {
   Product,
   ProductFormData,
@@ -120,8 +119,8 @@ export const createProduct = async (
   sellerId: string
 ): Promise<Product> => {
   try {
-    // Subir imágenes
-    const imageUrls = await uploadImages(productData.images);
+    // Use image URLs directly instead of uploading files
+    const imageUrls = productData.images;
 
     const productDoc = {
       ...productData,
@@ -176,17 +175,6 @@ export const deleteProduct = async (id: string): Promise<void> => {
   } catch (error: any) {
     throw new Error(error.message || "Error al eliminar producto");
   }
-};
-
-// Subir imágenes a Firebase Storage
-const uploadImages = async (files: File[]): Promise<string[]> => {
-  const uploadPromises = files.map(async (file) => {
-    const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    return getDownloadURL(snapshot.ref);
-  });
-
-  return Promise.all(uploadPromises);
 };
 
 // Buscar productos

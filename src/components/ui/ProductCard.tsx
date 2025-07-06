@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Product } from "@/types";
 import { useCart } from "@/store";
 
@@ -27,21 +26,33 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }).format(price);
   };
 
-  const getStockStatus = (): { text: string; color: string } => {
+  const getStockMessage = () => {
     if (product.stock === 0) {
-      return { text: "Out of Stock", color: "text-red-600" };
-    } else if (product.stock < 5) {
-      return {
-        text: `Only ${product.stock} available`,
-        color: "text-orange-600",
-      };
+      return "Out of Stock";
     }
-    return { text: "Available", color: "text-green-600" };
+    if (product.stock < 10) {
+      return `Only ${product.stock} available`;
+    }
+    return "Available";
   };
 
-  const stockStatus = getStockStatus();
+  const getStockColor = () => {
+    if (product.stock === 0) {
+      return "text-red-600";
+    }
+    if (product.stock < 10) {
+      return "text-orange-600";
+    }
+    return "text-green-600";
+  };
+
+  const stockStatus = getStockMessage();
   const isInCartNow = isInCart(product.id);
   const cartQuantity = getItemQuantity(product.id);
+
+  // Placeholder image as data URL
+  const placeholderImage =
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNiAyMEgyNE0yMCAxNlYyNE0xMiAyMEM4LjY4NjI5IDIwIDYgMTcuMzEzNyA2IDE0QzYgMTAuNjg2MyA4LjY4NjI5IDggMTIgOEMyOCA4IDI4IDggMjggOEMzMS4zMTM3IDggMzQgMTAuNjg2MyAzNCAxNEMzNCAx 3LjMxMzcgMzEuMzEzNyAyMCAyOCAyMEgyNE0yMCAyOEMxNy4yMzg2IDI4IDE1IDI1Ljc2MTQgMTUgMjNWMjBIMjVWMjNDMjUgMjUuNzYxNCAyMi43NjE0IDI4IDIwIDI4WiIgc3Ryb2tlPSIjOTlBMUFBIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=";
 
   return (
     <div
@@ -51,12 +62,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="relative">
           {/* Product Image */}
           <div className="aspect-square relative overflow-hidden">
-            <Image
-              src={product.images[0] || "/placeholder-snack.png"}
+            <img
+              src={product.images[0] || placeholderImage}
               alt={product.name}
-              fill
-              className="object-cover hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                e.currentTarget.src = placeholderImage;
+              }}
             />
           </div>
 
@@ -69,8 +81,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Stock Badge */}
           {product.stock === 0 && (
-            <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
-              Out of Stock
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <span className="text-white text-lg font-bold">Out of Stock</span>
             </div>
           )}
         </div>
@@ -129,8 +141,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             )}
           </div>
-          <span className={`text-sm font-medium ${stockStatus.color}`}>
-            {stockStatus.text}
+          <span className={`text-sm font-medium ${getStockColor()}`}>
+            {stockStatus}
           </span>
         </div>
 

@@ -54,7 +54,7 @@ export interface ProductFormData {
   description: string;
   price: number;
   category: ProductCategory;
-  images: File[];
+  images: string[];
   stock: number;
   weight?: number;
   ingredients?: string;
