@@ -1,78 +1,253 @@
 "use client";
 
-import { Button, Card, Space, Typography } from "antd";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { Product, ProductCategory } from "@/types";
+import { ProductCard, SearchBar } from "@/components";
+import { getFeaturedProducts } from "@/lib/api";
 
-const { Title, Text } = Typography;
+const HomePage: React.FC = () => {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default function Home() {
+  useEffect(() => {
+    const loadFeaturedProducts = async () => {
+      try {
+        const products = await getFeaturedProducts();
+        setFeaturedProducts(products);
+      } catch (err: any) {
+        setError(err.message || "Error al cargar productos destacados");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFeaturedProducts();
+  }, []);
+
+  const categories = [
+    { name: "Papas fritas", value: ProductCategory.CHIPS, emoji: "🍟" },
+    { name: "Galletas", value: ProductCategory.COOKIES, emoji: "🍪" },
+    { name: "Dulces", value: ProductCategory.CANDY, emoji: "🍬" },
+    { name: "Frutos secos", value: ProductCategory.NUTS, emoji: "🥜" },
+    { name: "Chocolate", value: ProductCategory.CHOCOLATE, emoji: "🍫" },
+    { name: "Palomitas", value: ProductCategory.POPCORN, emoji: "🍿" },
+    { name: "Saludable", value: ProductCategory.HEALTHY, emoji: "🥗" },
+    { name: "Bebidas", value: ProductCategory.BEVERAGES, emoji: "🥤" },
+  ];
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <Title level={1} className="text-gray-800 mb-4">
-            🌿 Madreselva Project
-          </Title>
-          <Text className="text-lg text-gray-600">
-            Tailwind CSS + Ant Design Integration Demo
-          </Text>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Tailwind CSS Card */}
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <h2 className="text-2xl font-bold text-purple-600 mb-4">
-              Tailwind CSS ✨
-            </h2>
-            <p className="text-gray-700 mb-4">
-              This card is styled with Tailwind CSS utility classes including:
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              🍿 Bienvenido a SnackHub
+            </h1>
+            <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+              Descubre los mejores snacks, dulces y bebidas de vendedores
+              locales. Tu marketplace favorito para satisfacer todos tus
+              antojos.
             </p>
-            <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-              <li>Responsive grid layout</li>
-              <li>Gradient backgrounds</li>
-              <li>Hover effects</li>
-              <li>Custom spacing</li>
-            </ul>
-            <button className="mt-4 bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
-              Tailwind Button
-            </button>
+
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto">
+              <SearchBar showFilters={true} className="mb-6" />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/products"
+                className="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
+                Ver todos los productos
+              </Link>
+              <Link
+                href="/auth/register"
+                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-orange-600 transition-colors"
+              >
+                Únete como vendedor
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+            Explora por categorías
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+            {categories.map((category) => (
+              <Link
+                key={category.value}
+                href={`/search?category=${category.value}`}
+                className="flex flex-col items-center p-6 bg-gray-50 rounded-lg hover:bg-orange-50 hover:shadow-md transition-all group"
+              >
+                <span className="text-4xl mb-3 group-hover:scale-110 transition-transform">
+                  {category.emoji}
+                </span>
+                <span className="text-sm font-medium text-gray-700 group-hover:text-orange-600 text-center">
+                  {category.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">
+              Productos destacados
+            </h2>
+            <Link
+              href="/products?featured=true"
+              className="text-orange-600 hover:text-orange-700 font-medium"
+            >
+              Ver todos →
+            </Link>
           </div>
 
-          {/* Ant Design Card */}
-          <Card title="Ant Design 🐜" hoverable className="shadow-lg">
-            <Text>
-              This card uses Ant Design components with pre-built functionality:
-            </Text>
-            <div className="mt-4">
-              <Space direction="vertical" size="small">
-                <Text type="secondary">• Rich component library</Text>
-                <Text type="secondary">• Built-in accessibility</Text>
-                <Text type="secondary">• Consistent design system</Text>
-                <Text type="secondary">• Form validation</Text>
-              </Space>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-lg shadow-md animate-pulse"
+                >
+                  <div className="aspect-square bg-gray-300"></div>
+                  <div className="p-4 space-y-3">
+                    <div className="h-4 bg-gray-300 rounded"></div>
+                    <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                    <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="mt-4">
-              <Space>
-                <Button type="primary">Primary Button</Button>
-                <Button type="default">Default Button</Button>
-                <Button type="dashed">Dashed Button</Button>
-              </Space>
+          ) : error ? (
+            <div className="text-center py-12">
+              <div className="text-gray-500 mb-4">
+                <svg
+                  className="w-16 h-16 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Error al cargar productos
+              </h3>
+              <p className="text-gray-500">{error}</p>
             </div>
-          </Card>
+          ) : featuredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-gray-500 mb-4">
+                <svg
+                  className="w-16 h-16 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No hay productos destacados
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Sé el primero en agregar productos al marketplace
+              </p>
+              <Link
+                href="/products/new"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700"
+              >
+                Agregar producto
+              </Link>
+            </div>
+          )}
         </div>
+      </section>
 
-        <div className="mt-12 text-center">
-          <Card className="bg-green-50 border-green-200">
-            <Title level={3} className="text-green-800 mb-2">
-              Perfect Integration! 🎉
-            </Title>
-            <Text className="text-green-700">
-              Both Tailwind CSS and Ant Design are working together
-              harmoniously. You can use Tailwind utilities for custom styling
-              while leveraging Ant Design's powerful components.
-            </Text>
-          </Card>
+      {/* CTA Section */}
+      <section className="py-16 bg-orange-600">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            ¿Tienes productos deliciosos para vender?
+          </h2>
+          <p className="text-xl text-orange-100 mb-8 max-w-2xl mx-auto">
+            Únete a nuestra comunidad de vendedores y comparte tus snacks
+            favoritos con miles de compradores.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/auth/register"
+              className="bg-white text-orange-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Registrarse como vendedor
+            </Link>
+            <Link
+              href="/seller-guide"
+              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-orange-600 transition-colors"
+            >
+              Guía del vendedor
+            </Link>
+          </div>
         </div>
-      </div>
-    </main>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-orange-600 mb-2">
+                1,000+
+              </div>
+              <div className="text-gray-600">Productos disponibles</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-orange-600 mb-2">
+                500+
+              </div>
+              <div className="text-gray-600">Vendedores activos</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-orange-600 mb-2">
+                10,000+
+              </div>
+              <div className="text-gray-600">Clientes satisfechos</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
-}
+};
+
+export default HomePage;
