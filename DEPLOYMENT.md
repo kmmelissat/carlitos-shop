@@ -1,4 +1,4 @@
-# Deployment Instructions for Netlify
+# Deployment Instructions for Vercel
 
 ## Prerequisites
 
@@ -18,9 +18,16 @@ Go to Firebase Console → Project Settings → General tab → "Your apps" sect
 
 Copy these values for your environment variables:
 
-### 2. Set Environment Variables in Netlify
+### 2. Deploy to Vercel
 
-In your Netlify dashboard, go to **Site settings → Environment variables** and add:
+1. **Go to Vercel** ([vercel.com](https://vercel.com))
+2. **Connect GitHub**: Link your GitHub repository
+3. **Import Project**: Click "Import" on your repository
+4. **Vercel will auto-detect Next.js** and configure build settings automatically
+
+### 3. Set Environment Variables in Vercel
+
+In your Vercel dashboard, go to **Settings → Environment Variables** and add:
 
 #### Firebase Client Configuration (Required)
 
@@ -43,15 +50,9 @@ FIREBASE_ADMIN_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your_project_id.iam.gservice
 
 **Note**: For the private key, copy the entire key from your service account JSON file, including the `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----` parts.
 
-### 3. Deploy to Netlify
-
-1. **Connect GitHub**: Link your GitHub repository to Netlify
-2. **Build Settings**: Netlify will automatically detect Next.js and use the correct build command
-3. **Deploy**: Click "Deploy site"
-
 ### 4. Configure Domain (Optional)
 
-- Set up a custom domain in Netlify settings
+- Set up a custom domain in Vercel settings
 - Configure DNS records as instructed
 
 ## Important Security Notes
@@ -100,9 +101,18 @@ service cloud.firestore {
 
 ### Performance Optimization
 
-- Images are automatically optimized by Netlify
+- Images are automatically optimized by Vercel
 - Static assets are served via CDN
-- Consider implementing caching strategies for API calls
+- Vercel handles caching automatically
+
+## Vercel Benefits
+
+✅ **Automatic Next.js optimization**
+✅ **Built-in image optimization**
+✅ **Edge functions support**
+✅ **Automatic HTTPS**
+✅ **Global CDN**
+✅ **Preview deployments for every push**
 
 ## Troubleshooting
 
@@ -110,10 +120,11 @@ service cloud.firestore {
 
 - Check that all environment variables are set correctly
 - Verify Firebase configuration values
+- Check Vercel build logs
 
 **Authentication not working?**
 
-- Ensure Firebase Auth domain includes your Netlify domain
+- Ensure Firebase Auth domain includes your Vercel domain
 - Check Firebase console → Authentication → Settings → Authorized domains
 
 **Admin panel not accessible?**
@@ -135,7 +146,17 @@ After deployment:
 
 If you encounter issues:
 
-1. Check Netlify build logs
+1. Check Vercel deployment logs
 2. Check browser console for errors
 3. Verify Firebase configuration
 4. Check Firebase security rules
+
+## Quick Commands
+
+```bash
+# Install Vercel CLI (optional)
+npm install -g vercel
+
+# Deploy from command line (optional)
+vercel --prod
+```

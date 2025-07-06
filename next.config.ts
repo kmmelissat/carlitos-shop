@@ -1,14 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Netlify-specific optimizations
+  // Image optimization for Vercel
   images: {
     formats: ["image/avif", "image/webp"],
     domains: ["firebasestorage.googleapis.com"], // Add Firebase Storage domain
-  },
-  // Ensure compatibility with Netlify
-  experimental: {
-    esmExternals: "loose",
   },
   // Disable ESLint during builds
   eslint: {
