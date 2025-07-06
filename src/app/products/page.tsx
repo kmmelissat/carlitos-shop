@@ -4,17 +4,19 @@ import { ProductCategory } from "@/types";
 import ProductsClient from "./ProductsClient";
 
 interface ProductsPageProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
     category?: ProductCategory;
     minPrice?: string;
     maxPrice?: string;
     inStock?: string;
     page?: string;
-  };
+  }>;
 }
 
 const ProductsPage: React.FC<ProductsPageProps> = async ({ searchParams }) => {
+  // Await the searchParams promise
+  const resolvedSearchParams = await searchParams;
   // Fetch all products from the server
   const allProducts = await getProductsServer();
 
@@ -22,8 +24,8 @@ const ProductsPage: React.FC<ProductsPageProps> = async ({ searchParams }) => {
   let filteredProducts = allProducts;
 
   // Filter by search query
-  if (searchParams.q) {
-    const searchTerm = searchParams.q.toLowerCase();
+  if (resolvedSearchParams.q) {
+    const searchTerm = resolvedSearchParams.q.toLowerCase();
     filteredProducts = filteredProducts.filter(
       (product) =>
         product.name.toLowerCase().includes(searchTerm) ||
@@ -33,34 +35,34 @@ const ProductsPage: React.FC<ProductsPageProps> = async ({ searchParams }) => {
   }
 
   // Filter by category
-  if (searchParams.category) {
+  if (resolvedSearchParams.category) {
     filteredProducts = filteredProducts.filter(
-      (product) => product.category === searchParams.category
+      (product) => product.category === resolvedSearchParams.category
     );
   }
 
   // Filter by price range
-  if (searchParams.minPrice) {
-    const minPrice = parseFloat(searchParams.minPrice);
+  if (resolvedSearchParams.minPrice) {
+    const minPrice = parseFloat(resolvedSearchParams.minPrice);
     filteredProducts = filteredProducts.filter(
       (product) => product.price >= minPrice
     );
   }
 
-  if (searchParams.maxPrice) {
-    const maxPrice = parseFloat(searchParams.maxPrice);
+  if (resolvedSearchParams.maxPrice) {
+    const maxPrice = parseFloat(resolvedSearchParams.maxPrice);
     filteredProducts = filteredProducts.filter(
       (product) => product.price <= maxPrice
     );
   }
 
   // Filter by stock
-  if (searchParams.inStock === "true") {
+  if (resolvedSearchParams.inStock === "true") {
     filteredProducts = filteredProducts.filter((product) => product.stock > 0);
   }
 
   // Pagination
-  const currentPage = parseInt(searchParams.page || "1");
+  const currentPage = parseInt(resolvedSearchParams.page || "1");
   const productsPerPage = 12;
   const startIndex = (currentPage - 1) * productsPerPage;
   const paginatedProducts = filteredProducts.slice(
@@ -95,7 +97,7 @@ const ProductsPage: React.FC<ProductsPageProps> = async ({ searchParams }) => {
             totalProducts={filteredProducts.length}
             currentPage={currentPage}
             totalPages={totalPages}
-            searchParams={searchParams}
+            searchParams={resolvedSearchParams}
           />
         </Suspense>
       </div>
