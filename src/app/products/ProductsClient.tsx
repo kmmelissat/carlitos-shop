@@ -24,17 +24,13 @@ interface ProductsClientProps {
 const categories = [
   { id: ProductCategory.CHIPS, name: "Chips & Snacks", icon: "lunch_dining" },
   { id: ProductCategory.COOKIES, name: "Cookies", icon: "cookie" },
-  { id: ProductCategory.CANDY, name: "Candy", icon: "candy" },
-  { id: ProductCategory.CHOCOLATE, name: "Chocolate", icon: "chocolate" },
+  { id: ProductCategory.CANDY, name: "Candy", icon: "icecream" },
+  { id: ProductCategory.CHOCOLATE, name: "Chocolate", icon: "pix" },
   { id: ProductCategory.NUTS, name: "Nuts", icon: "eco" },
   { id: ProductCategory.BEVERAGES, name: "Beverages", icon: "local_drink" },
   { id: ProductCategory.CRACKERS, name: "Crackers", icon: "grain" },
   { id: ProductCategory.POPCORN, name: "Popcorn", icon: "movie" },
-  {
-    id: ProductCategory.DRIED_FRUITS,
-    name: "Dried Fruits",
-    icon: "local_florist",
-  },
+  { id: ProductCategory.DRIED_FRUITS, name: "Dried Fruits", icon: "local_florist" },
   { id: ProductCategory.HEALTHY, name: "Healthy", icon: "health_and_safety" },
   { id: ProductCategory.OTHER, name: "Other", icon: "category" },
 ];
