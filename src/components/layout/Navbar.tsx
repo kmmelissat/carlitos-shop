@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
 
   return (
     <nav
-      className={`bg-white shadow-lg border-b border-gray-200 ${
+      className={`bg-white shadow-md border-b border-gray-200 sticky top-0 z-50 ${
         className || ""
       }`}
     >

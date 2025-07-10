@@ -17,7 +17,7 @@ const ClientWrapper: React.FC<ClientWrapperProps> = ({
   return (
     <AuthProvider serverUser={serverUser}>
       <CartProvider>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-gray-50">
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />

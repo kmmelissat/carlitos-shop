@@ -1,24 +1,58 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Product } from "@/types";
-import { useCart } from "@/store";
+import { useCart, useAuth } from "@/store";
+import { showToast } from "@/components/ui/Toast";
 
 interface ProductCardProps {
   product: Product;
   className?: string;
+  showAddToCart?: boolean; // New prop to control Add to Cart button
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
   className = "",
+  showAddToCart = true, // Default to true to maintain existing behavior
 }) => {
   const { addItem, isInCart, getItemQuantity } = useCart();
+  const { user } = useAuth();
+  const router = useRouter();
+  const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent Link navigation
-    addItem(product, 1);
+
+    if (isAdding) return; // Prevent double clicks
+
+    // Check if user is authenticated
+    if (!user) {
+      showToast("Please sign in to add items to your cart", "info", 4000);
+      router.push("/auth/login");
+      return;
+    }
+
+    setIsAdding(true);
+
+    try {
+      // Add item to cart
+      addItem(product, 1);
+
+      // Show success toast
+      showToast(`${product.name} added to cart!`, "success", 3000);
+
+      // Reset state
+      setTimeout(() => {
+        setIsAdding(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      showToast("Error adding item to cart", "error");
+      setIsAdding(false);
+    }
   };
 
   const formatPrice = (price: number): string => {
@@ -43,20 +77,34 @@ const ProductCard: React.FC<ProductCardProps> = ({
       return "text-red-600";
     }
     if (product.stock < 10) {
-      return "text-orange-600";
+      return "text-amber-600";
     }
-    return "text-green-600";
+    return "text-emerald-600";
   };
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      chips: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      cookies: "bg-amber-100 text-amber-800 border-amber-200",
-      beverages: "bg-blue-100 text-blue-800 border-blue-200",
-      chocolate: "bg-orange-100 text-orange-800 border-orange-200",
-      nuts: "bg-green-100 text-green-800 border-green-200",
-      candy: "bg-pink-100 text-pink-800 border-pink-200",
-      other: "bg-gray-100 text-gray-800 border-gray-200",
+      chips:
+        "bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-300",
+      cookies:
+        "bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800 border-amber-300",
+      beverages:
+        "bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-blue-300",
+      chocolate:
+        "bg-gradient-to-r from-amber-100 to-orange-200 text-amber-900 border-amber-300",
+      nuts: "bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-green-300",
+      candy:
+        "bg-gradient-to-r from-pink-100 to-rose-200 text-pink-900 border-pink-300",
+      crackers:
+        "bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800 border-amber-300",
+      popcorn:
+        "bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-300",
+      dried_fruits:
+        "bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border-purple-300",
+      healthy:
+        "bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800 border-emerald-300",
+      other:
+        "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border-gray-300",
     };
     return colors[category as keyof typeof colors] || colors.other;
   };
@@ -71,65 +119,83 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden ${className}`}
+      className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-orange-200 hover:-translate-y-1 ${className}`}
     >
       <Link href={`/products/${product.id}`}>
-        <div className="relative">
+        <div className="relative overflow-hidden">
           {/* Product Image */}
-          <div className="aspect-square relative overflow-hidden">
+          <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
             <img
               src={product.images[0] || placeholderImage}
               alt={product.name}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               onError={(e) => {
                 e.currentTarget.src = placeholderImage;
               }}
             />
+
+            {/* Gradient overlay for better text visibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
 
           {/* Featured Badge */}
           {product.featured && (
-            <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center">
+            <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg flex items-center animate-pulse">
               <span className="material-icons-round text-sm mr-1">star</span>
               Featured
             </div>
           )}
 
+          {/* Category Badge */}
+          <div className="absolute bottom-3 right-3">
+            <span
+              className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border shadow-sm backdrop-blur-sm ${getCategoryColor(
+                product.category
+              )}`}
+            >
+              {product.category.charAt(0).toUpperCase() +
+                product.category.slice(1).replace("_", " ")}
+            </span>
+          </div>
+
           {/* Stock Badge */}
           {product.stock === 0 && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <span className="text-white text-lg font-bold">Out of Stock</span>
+            <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center backdrop-blur-sm">
+              <div className="text-center">
+                <span className="material-icons-round text-white text-4xl mb-2">
+                  inventory_2
+                </span>
+                <span className="text-white text-lg font-bold block">
+                  Out of Stock
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Low Stock Warning */}
+          {product.stock > 0 && product.stock < 10 && (
+            <div className="absolute top-3 right-3 bg-amber-500 text-white px-2.5 py-1 rounded-full text-xs font-medium shadow-lg flex items-center">
+              <span className="material-icons-round text-sm mr-1">warning</span>
+              Low Stock
             </div>
           )}
         </div>
       </Link>
 
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-5">
         <Link href={`/products/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2">
+          <h3 className="text-lg font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2 mb-2 group-hover:text-orange-600">
             {product.name}
           </h3>
         </Link>
 
-        <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+        <p className="text-gray-600 text-sm mb-3 line-clamp-2 leading-relaxed">
           {product.description}
         </p>
 
-        {/* Category */}
-        <div className="mt-2">
-          <span
-            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getCategoryColor(
-              product.category
-            )}`}
-          >
-            {product.category.charAt(0).toUpperCase() +
-              product.category.slice(1)}
-          </span>
-        </div>
-
         {/* Rating */}
-        <div className="flex items-center mt-2">
+        <div className="flex items-center mb-3">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <svg
@@ -145,15 +211,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </svg>
             ))}
           </div>
-          <span className="text-gray-600 text-sm ml-2">
-            {product.rating.toFixed(1)} ({product.reviewCount} reviews)
+          <span className="text-gray-600 text-sm ml-2 font-medium">
+            {product.rating.toFixed(1)}
+            <span className="text-gray-400 font-normal">
+              ({product.reviewCount})
+            </span>
           </span>
         </div>
 
         {/* Price and Stock */}
-        <div className="flex items-center justify-between mt-3">
-          <div>
-            <span className="text-2xl font-bold text-gray-900">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-baseline">
+            <span className="text-2xl font-bold text-gray-900 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
               {formatPrice(product.price)}
             </span>
             {product.weight && (
@@ -162,86 +231,115 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </span>
             )}
           </div>
-          <span className={`text-sm font-medium ${getStockColor()}`}>
-            {stockStatus}
-          </span>
-        </div>
-
-        {/* Seller Info */}
-        <div className="flex items-center mt-2">
-          <span className="text-gray-500 text-sm">
-            By {product.seller.name}
-          </span>
-          <div className="flex items-center ml-2">
-            <svg
-              className="w-3 h-3 text-yellow-400 fill-current"
-              viewBox="0 0 24 24"
+          <div className="flex items-center">
+            <span
+              className={`text-sm font-semibold ${getStockColor()} flex items-center`}
             >
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-            <span className="text-gray-500 text-xs ml-1">
-              {product.seller.rating.toFixed(1)}
+              <span className="material-icons-round text-sm mr-1">
+                {product.stock === 0
+                  ? "inventory_2"
+                  : product.stock < 10
+                  ? "warning"
+                  : "check_circle"}
+              </span>
+              {stockStatus}
             </span>
           </div>
         </div>
 
         {/* Add to Cart Button */}
-        <div className="mt-4">
-          {product.stock > 0 ? (
-            <button
-              onClick={handleAddToCart}
-              disabled={product.stock === 0}
-              className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-                isInCartNow
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "bg-orange-600 text-white hover:bg-orange-700"
-              }`}
-            >
-              {isInCartNow ? (
+        {showAddToCart && (
+          <div className="space-y-2">
+            {product.stock > 0 ? (
+              <button
+                onClick={handleAddToCart}
+                disabled={product.stock === 0 || isAdding}
+                className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden ${
+                  !user
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-blue-200"
+                    : isInCartNow
+                    ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-600 hover:to-green-700 shadow-emerald-200"
+                    : isAdding
+                    ? "bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-orange-200"
+                    : "bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 shadow-orange-200"
+                }`}
+              >
+                {!user ? (
+                  <span className="flex items-center justify-center">
+                    <span className="material-icons-round text-lg mr-2">
+                      login
+                    </span>
+                    Sign In to Add to Cart
+                  </span>
+                ) : isAdding ? (
+                  <span className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Adding...
+                  </span>
+                ) : isInCartNow ? (
+                  <span className="flex items-center justify-center">
+                    <span className="material-icons-round text-lg mr-2">
+                      check_circle
+                    </span>
+                    In Cart ({cartQuantity})
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center">
+                    <span className="material-icons-round text-lg mr-2">
+                      add_shopping_cart
+                    </span>
+                    Add to Cart
+                  </span>
+                )}
+              </button>
+            ) : (
+              <button
+                disabled
+                className="w-full py-3 px-4 rounded-xl font-semibold bg-gray-200 text-gray-500 cursor-not-allowed border-2 border-gray-300"
+              >
                 <span className="flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  In Cart ({cartQuantity})
+                  <span className="material-icons-round text-lg mr-2">
+                    block
+                  </span>
+                  Out of Stock
                 </span>
-              ) : (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.68 8.32a2 2 0 01-1.98 1.68H9m6 0v-1a2 2 0 00-2-2H9a2 2 0 00-2 2v1m6 0h6"
-                    />
-                  </svg>
-                  Add to Cart
-                </span>
-              )}
-            </button>
-          ) : (
-            <button
-              disabled
-              className="w-full py-2 px-4 rounded-lg font-medium bg-gray-300 text-gray-500 cursor-not-allowed"
-            >
-              Out of Stock
-            </button>
-          )}
-        </div>
+              </button>
+            )}
+
+            {/* Quick actions */}
+            {isInCartNow && user && (
+              <div className="flex space-x-2 animate-fadeIn">
+                <Link
+                  href="/cart"
+                  className="flex-1 py-2 px-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center text-sm font-medium"
+                >
+                  View Cart
+                </Link>
+                <Link
+                  href={`/products/${product.id}`}
+                  className="flex-1 py-2 px-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center text-sm font-medium"
+                >
+                  View Details
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* View Product Button (when Add to Cart is hidden) */}
+        {!showAddToCart && (
+          <Link
+            href={`/products/${product.id}`}
+            className="block w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-blue-200 text-center"
+          >
+            <span className="flex items-center justify-center">
+              <span className="material-icons-round text-lg mr-2">
+                visibility
+              </span>
+              View Product
+            </span>
+          </Link>
+        )}
       </div>
     </div>
   );
