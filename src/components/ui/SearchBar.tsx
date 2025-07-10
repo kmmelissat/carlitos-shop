@@ -81,6 +81,19 @@ const SearchBar: React.FC<SearchBarProps> = ({
     setSearchQuery("");
   };
 
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      chips: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      cookies: "bg-amber-100 text-amber-800 border-amber-200",
+      beverages: "bg-blue-100 text-blue-800 border-blue-200",
+      chocolate: "bg-orange-100 text-orange-800 border-orange-200",
+      nuts: "bg-green-100 text-green-800 border-green-200",
+      candy: "bg-pink-100 text-pink-800 border-pink-200",
+      other: "bg-gray-100 text-gray-800 border-gray-200",
+    };
+    return colors[category as keyof typeof colors] || colors.other;
+  };
+
   return (
     <div className={`w-full ${className}`}>
       <form onSubmit={handleSearch} className="w-full">
@@ -250,12 +263,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
         filters.inStock) && (
         <div className="mt-3 flex flex-wrap gap-2">
           {filters.category && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
-              {filters.category}
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-sm border ${getCategoryColor(
+                filters.category
+              )}`}
+            >
+              {filters.category.charAt(0).toUpperCase() +
+                filters.category.slice(1)}
               <button
                 type="button"
                 onClick={() => handleFilterChange("category", "")}
-                className="ml-2 text-orange-600 hover:text-orange-800"
+                className="ml-2 hover:text-gray-700"
               >
                 ×
               </button>
@@ -264,7 +282,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           {filters.minPrice && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
-              From €{filters.minPrice}
+              From ${filters.minPrice}
               <button
                 type="button"
                 onClick={() => handleFilterChange("minPrice", "")}
@@ -277,7 +295,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
           {filters.maxPrice && (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
-              Up to €{filters.maxPrice}
+              Up to ${filters.maxPrice}
               <button
                 type="button"
                 onClick={() => handleFilterChange("maxPrice", "")}

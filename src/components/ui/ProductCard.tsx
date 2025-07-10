@@ -48,6 +48,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
     return "text-green-600";
   };
 
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      chips: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      cookies: "bg-amber-100 text-amber-800 border-amber-200",
+      beverages: "bg-blue-100 text-blue-800 border-blue-200",
+      chocolate: "bg-orange-100 text-orange-800 border-orange-200",
+      nuts: "bg-green-100 text-green-800 border-green-200",
+      candy: "bg-pink-100 text-pink-800 border-pink-200",
+      other: "bg-gray-100 text-gray-800 border-gray-200",
+    };
+    return colors[category as keyof typeof colors] || colors.other;
+  };
+
   const stockStatus = getStockMessage();
   const isInCartNow = isInCart(product.id);
   const cartQuantity = getItemQuantity(product.id);
@@ -76,7 +89,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Featured Badge */}
           {product.featured && (
-            <div className="absolute top-2 left-2 bg-orange-600 text-white px-2 py-1 rounded-full text-xs font-semibold">
+            <div className="absolute top-3 left-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg flex items-center">
+              <span className="material-icons-round text-sm mr-1">star</span>
               Featured
             </div>
           )}
@@ -104,8 +118,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Category */}
         <div className="mt-2">
-          <span className="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
-            {product.category}
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getCategoryColor(
+              product.category
+            )}`}
+          >
+            {product.category.charAt(0).toUpperCase() +
+              product.category.slice(1)}
           </span>
         </div>
 

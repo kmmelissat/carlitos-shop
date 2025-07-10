@@ -1,98 +1,21 @@
 import {
   collection,
   doc,
-  getDocs,
   getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
-  query,
-  where,
-  orderBy,
-  limit,
-  startAfter,
-  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import {
   Product,
   ProductFormData,
-  ProductFilter,
-  Review,
-  PaginatedResponse,
 } from "@/types";
 
 // Colecciones de Firestore
 const PRODUCTS_COLLECTION = "products";
-const REVIEWS_COLLECTION = "reviews";
 
-// Obtener todos los productos con filtros
-export const getProducts = async (
-  filters: ProductFilter = {},
-  page: number = 1,
-  pageSize: number = 12
-): Promise<PaginatedResponse<Product>> => {
-  try {
-    let q = query(collection(db, PRODUCTS_COLLECTION));
 
-    // Aplicar filtros
-    if (filters.category) {
-      q = query(q, where("category", "==", filters.category));
-    }
-
-    if (filters.inStock) {
-      q = query(q, where("stock", ">", 0));
-    }
-
-    if (filters.featured) {
-      q = query(q, where("featured", "==", true));
-    }
-
-    if (filters.minPrice || filters.maxPrice) {
-      if (filters.minPrice && filters.maxPrice) {
-        q = query(
-          q,
-          where("price", ">=", filters.minPrice),
-          where("price", "<=", filters.maxPrice)
-        );
-      } else if (filters.minPrice) {
-        q = query(q, where("price", ">=", filters.minPrice));
-      } else if (filters.maxPrice) {
-        q = query(q, where("price", "<=", filters.maxPrice));
-      }
-    }
-
-    // Ordenar
-    q = query(q, orderBy("createdAt", "desc"));
-
-    // Paginación
-    q = query(q, limit(pageSize));
-
-    const querySnapshot = await getDocs(q);
-    const products: Product[] = [];
-
-    querySnapshot.forEach((doc) => {
-      products.push({
-        id: doc.id,
-        ...doc.data(),
-      } as Product);
-    });
-
-    // Contar total (simplificado)
-    const total = products.length;
-    const totalPages = Math.ceil(total / pageSize);
-
-    return {
-      data: products,
-      total,
-      page,
-      limit: pageSize,
-      totalPages,
-    };
-  } catch (error: any) {
-    throw new Error(error.message || "Error al obtener productos");
-  }
-};
 
 // Obtener producto por ID
 export const getProductById = async (id: string): Promise<Product | null> => {
@@ -177,85 +100,8 @@ export const deleteProduct = async (id: string): Promise<void> => {
   }
 };
 
-// Buscar productos
-export const searchProducts = async (
-  searchTerm: string
-): Promise<Product[]> => {
-  try {
-    // Búsqueda simple por nombre (Firebase no soporta búsqueda de texto completo nativa)
-    const q = query(
-      collection(db, PRODUCTS_COLLECTION),
-      where("name", ">=", searchTerm),
-      where("name", "<=", searchTerm + "\uf8ff"),
-      orderBy("name")
-    );
 
-    const querySnapshot = await getDocs(q);
-    const products: Product[] = [];
 
-    querySnapshot.forEach((doc) => {
-      products.push({
-        id: doc.id,
-        ...doc.data(),
-      } as Product);
-    });
 
-    return products;
-  } catch (error: any) {
-    throw new Error(error.message || "Error al buscar productos");
-  }
-};
 
-// Obtener productos destacados
-export const getFeaturedProducts = async (): Promise<Product[]> => {
-  try {
-    const q = query(
-      collection(db, PRODUCTS_COLLECTION),
-      where("featured", "==", true),
-      where("isActive", "==", true),
-      orderBy("createdAt", "desc"),
-      limit(8)
-    );
 
-    const querySnapshot = await getDocs(q);
-    const products: Product[] = [];
-
-    querySnapshot.forEach((doc) => {
-      products.push({
-        id: doc.id,
-        ...doc.data(),
-      } as Product);
-    });
-
-    return products;
-  } catch (error: any) {
-    throw new Error(error.message || "Error al obtener productos destacados");
-  }
-};
-
-// Obtener reseñas de un producto
-export const getProductReviews = async (
-  productId: string
-): Promise<Review[]> => {
-  try {
-    const q = query(
-      collection(db, REVIEWS_COLLECTION),
-      where("productId", "==", productId),
-      orderBy("createdAt", "desc")
-    );
-
-    const querySnapshot = await getDocs(q);
-    const reviews: Review[] = [];
-
-    querySnapshot.forEach((doc) => {
-      reviews.push({
-        id: doc.id,
-        ...doc.data(),
-      } as Review);
-    });
-
-    return reviews;
-  } catch (error: any) {
-    throw new Error(error.message || "Error al obtener reseñas");
-  }
-};

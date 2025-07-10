@@ -2,7 +2,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  sendPasswordResetEmail,
   updateProfile,
   signInWithPopup,
   GoogleAuthProvider,
@@ -115,16 +114,7 @@ export const logoutUser = async (): Promise<void> => {
   }
 };
 
-// Restablecer contraseña
-export const resetPassword = async (email: string): Promise<void> => {
-  try {
-    await sendPasswordResetEmail(auth, email);
-  } catch (error: any) {
-    throw new Error(
-      error.message || "Error al enviar email de restablecimiento"
-    );
-  }
-};
+
 
 // Obtener usuario actual
 export const getCurrentUser = async (): Promise<AuthUser | null> => {
@@ -157,20 +147,7 @@ export const getCurrentUser = async (): Promise<AuthUser | null> => {
   }
 };
 
-// Convertir FirebaseUser a AuthUser
-export const convertFirebaseUser = (
-  firebaseUser: FirebaseUser,
-  userData: User
-): AuthUser => {
-  return {
-    id: firebaseUser.uid,
-    email: userData.email,
-    name: userData.name,
-    avatar: userData.avatar,
-    role: userData.role,
-    isVerified: userData.isVerified,
-  };
-};
+
 
 // Iniciar sesión con Google
 export const signInWithGoogle = async (): Promise<AuthUser> => {

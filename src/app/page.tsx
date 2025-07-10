@@ -18,50 +18,58 @@ const HomePage = async () => {
     {
       id: ProductCategory.CHIPS,
       name: "Chips & Snacks",
-      icon: "🍟",
-      color: "bg-yellow-100",
+      icon: "restaurant",
+      color: "bg-gradient-to-br from-yellow-400 to-orange-500",
+      textColor: "text-white",
     },
     {
       id: ProductCategory.COOKIES,
       name: "Cookies",
-      icon: "🍪",
-      color: "bg-amber-100",
+      icon: "cake",
+      color: "bg-gradient-to-br from-amber-400 to-orange-600",
+      textColor: "text-white",
     },
     {
       id: ProductCategory.CANDY,
       name: "Candy",
-      icon: "🍭",
-      color: "bg-pink-100",
+      icon: "favorite",
+      color: "bg-gradient-to-br from-pink-400 to-red-500",
+      textColor: "text-white",
     },
     {
       id: ProductCategory.CHOCOLATE,
       name: "Chocolate",
-      icon: "🍫",
-      color: "bg-amber-100",
+      icon: "spa",
+      color: "bg-gradient-to-br from-amber-600 to-brown-700",
+      textColor: "text-white",
     },
     {
       id: ProductCategory.NUTS,
       name: "Nuts",
-      icon: "🥜",
-      color: "bg-yellow-100",
+      icon: "eco",
+      color: "bg-gradient-to-br from-green-400 to-emerald-600",
+      textColor: "text-white",
     },
     {
       id: ProductCategory.BEVERAGES,
       name: "Beverages",
-      icon: "🥤",
-      color: "bg-blue-100",
+      icon: "local_drink",
+      color: "bg-gradient-to-br from-blue-400 to-cyan-600",
+      textColor: "text-white",
     },
     {
       id: ProductCategory.CRACKERS,
       name: "Crackers",
-      icon: "🧀",
-      color: "bg-orange-100",
+      icon: "grain",
+      color: "bg-gradient-to-br from-orange-400 to-red-500",
+      textColor: "text-white",
     },
     {
       id: ProductCategory.POPCORN,
       name: "Popcorn",
-      icon: "🍿",
-      color: "bg-yellow-100",
+      icon: "movie",
+      color: "bg-gradient-to-br from-yellow-400 to-orange-500",
+      textColor: "text-white",
     },
   ];
 
@@ -125,87 +133,121 @@ const HomePage = async () => {
       </div>
 
       {/* Categories Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Explore our categories
-          </h2>
-          <p className="text-gray-600">
-            Find your favorite snacks organized by categories
-          </p>
-        </div>
+      <div className="bg-gradient-to-b from-gray-50 to-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Categories
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover your favorite snacks organized by categories. From sweet
+              treats to savory delights, we have something for everyone.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/products?category=${category.id}`}
-              className="group p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200"
-            >
-              <div
-                className={`w-16 h-16 ${category.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                href={`/products?category=${category.id}`}
+                className="group relative p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
               >
-                <span className="text-2xl">{category.icon}</span>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 text-center">
-                {category.name}
-              </h3>
-            </Link>
-          ))}
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-md`}
+                  >
+                    <span
+                      className={`material-icons-round text-2xl ${category.textColor}`}
+                    >
+                      {category.icon}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">
+                    {category.name}
+                  </h3>
+                  <div className="flex items-center text-sm text-gray-500 group-hover:text-blue-600 transition-colors duration-200">
+                    <span className="mr-1">Explore</span>
+                    <span className="material-icons-round text-lg transform group-hover:translate-x-1 transition-transform duration-200">
+                      arrow_forward
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Featured Products */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Featured products
-          </h2>
-          <p className="text-gray-600">
-            The most popular snacks at CarlitosStore
-          </p>
-        </div>
-
-        {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">
-              No featured products available at the moment.
+      <div className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="flex items-center justify-center mb-4">
+              <span className="material-icons-round text-4xl text-orange-600 mr-3">
+                star
+              </span>
+              <h2 className="text-4xl font-bold text-gray-900">
+                Featured Products
+              </h2>
+            </div>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover our most popular snacks, including authentic El Salvador
+              favorites and international classics loved by our customers.
             </p>
+            <div className="flex items-center justify-center mt-4">
+              <div className="flex items-center bg-orange-50 px-4 py-2 rounded-full">
+                <span className="material-icons-round text-orange-600 mr-2">
+                  star
+                </span>
+                <span className="text-orange-700 font-medium">
+                  All products below are featured items
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {featuredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-gray-50 rounded-2xl">
+              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="material-icons-round text-4xl text-gray-400">
+                  inventory_2
+                </span>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No featured products available
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Check back soon for our latest featured products, or browse our
+                full catalog.
+              </p>
+              <Link
+                href="/products"
+                className="inline-flex items-center px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors duration-200"
+              >
+                <span className="material-icons-round mr-2">shopping_bag</span>
+                Browse All Products
+              </Link>
+            </div>
+          )}
+
+          <div className="text-center mt-16">
             <Link
               href="/products"
-              className="text-orange-600 hover:text-orange-700 font-medium"
+              className="group inline-flex items-center px-10 py-4 bg-gradient-to-r from-orange-600 to-red-600 text-white text-lg font-semibold rounded-2xl hover:from-orange-700 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              View all products
+              <span className="material-icons-round mr-2">explore</span>
+              Explore All Products
+              <span className="material-icons-round ml-2 transform group-hover:translate-x-1 transition-transform duration-200">
+                arrow_forward
+              </span>
             </Link>
           </div>
-        )}
-
-        <div className="text-center mt-12">
-          <Link
-            href="/products"
-            className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 transition-colors duration-200"
-          >
-            View all products
-            <svg
-              className="ml-2 -mr-1 w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </Link>
         </div>
       </div>
 

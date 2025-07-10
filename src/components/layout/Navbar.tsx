@@ -49,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               alt="Carlitos Store"
               width={160}
               height={160}
-              className="h-16 w-auto"
+              className="h-12 w-auto"
             />
             <span className="text-2xl font-bold text-[#09112A] hidden sm:block">
               Carlito's ESEN

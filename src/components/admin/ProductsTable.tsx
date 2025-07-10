@@ -50,6 +50,19 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ initialProducts }) => {
     return { text: "In Stock", color: "text-green-600 bg-green-100" };
   };
 
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      chips: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      cookies: "bg-amber-100 text-amber-800 border-amber-200",
+      beverages: "bg-blue-100 text-blue-800 border-blue-200",
+      chocolate: "bg-orange-100 text-orange-800 border-orange-200",
+      nuts: "bg-green-100 text-green-800 border-green-200",
+      candy: "bg-pink-100 text-pink-800 border-pink-200",
+      other: "bg-gray-100 text-gray-800 border-gray-200",
+    };
+    return colors[category as keyof typeof colors] || colors.other;
+  };
+
   if (products.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
@@ -152,8 +165,16 @@ const ProductsTable: React.FC<ProductsTableProps> = ({ initialProducts }) => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 capitalize">
-                        {product.category.replace("_", " ")}
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getCategoryColor(
+                          product.category
+                        )}`}
+                      >
+                        {product.category
+                          .replace("_", " ")
+                          .charAt(0)
+                          .toUpperCase() +
+                          product.category.replace("_", " ").slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
