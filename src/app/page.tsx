@@ -104,6 +104,14 @@ const HomePage = async () => {
               />
               <div className="absolute inset-0 bg-black bg-opacity-40"></div>
             </div>
+            <div className="relative h-[50vh]">
+              <Image
+                src="/carlitos.jpeg"
+                alt="Carlitos Store - Image 3"
+                fill
+                className="object-cover"
+              />
+            </div>
           </Carousel>
         </div>
 

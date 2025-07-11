@@ -85,7 +85,7 @@ const Toast: React.FC<ToastProps> = ({
 
   return (
     <div
-      className={`fixed top-4 right-4 z-[9999] transition-all duration-300 transform ${
+      className={`transition-all duration-300 transform ${
         isVisible && !isExiting
           ? "translate-y-0 opacity-100"
           : "translate-y-[-100%] opacity-0"
@@ -108,6 +108,7 @@ const Toast: React.FC<ToastProps> = ({
 // Toast Container Component
 export const ToastContainer: React.FC = () => {
   const [toasts, setToasts] = useState<ToastProps[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
 
   const addToast = (toast: Omit<ToastProps, "id" | "onClose">) => {
     const id = Date.now().toString();
@@ -118,15 +119,17 @@ export const ToastContainer: React.FC = () => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
-  // Make addToast available globally
+  // Handle hydration and make addToast available globally
   useEffect(() => {
+    setIsMounted(true);
     (window as any).addToast = addToast;
     return () => {
       delete (window as any).addToast;
     };
   }, []);
 
-  if (typeof window === "undefined") return null;
+  // Don't render on server or before hydration
+  if (!isMounted) return null;
 
   return createPortal(
     <div className="fixed top-4 right-4 z-[9999] space-y-2">
