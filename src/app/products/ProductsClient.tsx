@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Select, Button } from "antd";
+import { Select, Button, Space } from "antd";
 import { AppstoreOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { ProductCard, SearchBar } from "@/components";
 import CategorySidebar from "@/components/ui/CategorySidebar";
@@ -203,7 +203,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({
                 </div>
 
                 {/* View Mode */}
-                <Button.Group>
+                <Space.Compact>
                   <Button
                     type={viewMode === "grid" ? "primary" : "default"}
                     icon={<AppstoreOutlined />}
@@ -214,7 +214,7 @@ const ProductsClient: React.FC<ProductsClientProps> = ({
                     icon={<UnorderedListOutlined />}
                     onClick={() => setViewMode("list")}
                   />
-                </Button.Group>
+                </Space.Compact>
               </div>
             </div>
           </div>
