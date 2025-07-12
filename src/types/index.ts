@@ -14,4 +14,15 @@ export type {
 
 export { UserRole } from "./user";
 
+// Checkout types
+export type {
+  CheckoutFormData,
+  PaymentMethod,
+  DeliveryOption,
+  Order,
+  OrderStatus,
+} from "./checkout";
+
+export { PaymentMethodType, DeliveryType, OrderStatusType } from "./checkout";
+
 // Common types

@@ -60,6 +60,52 @@ body {
     Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Ensure input placeholders use Mona Sans */
+input::placeholder,
+textarea::placeholder,
+.ant-input::placeholder,
+.ant-input-number::placeholder,
+.ant-select-selection-placeholder,
+.ant-picker-input > input::placeholder {
+  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  color: #bfbfbf;
+}
+
+/* Ensure all Ant Design inputs use Mona Sans */
+.ant-input,
+.ant-input-number,
+.ant-select-selector,
+.ant-picker-input > input,
+.ant-form-item-control-input,
+.ant-form-item-control-input-content {
+  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* Additional form elements that need Mona Sans */
+.ant-select-dropdown,
+.ant-picker-dropdown,
+.ant-dropdown-menu,
+.ant-modal-content,
+.ant-message,
+.ant-notification,
+.ant-tooltip,
+.ant-popover {
+  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* Ensure buttons and other interactive elements use Mona Sans */
+.ant-btn,
+.ant-radio,
+.ant-checkbox,
+.ant-switch,
+.ant-slider {
+  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
 /* Ant Design Carousel Styling */
 .ant-carousel .slick-dots {
   bottom: 40px;

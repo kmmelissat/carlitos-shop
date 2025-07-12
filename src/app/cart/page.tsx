@@ -59,8 +59,7 @@ const CartPage: React.FC = () => {
   };
 
   const handleCheckout = () => {
-    // For now, just show an alert. You can implement real checkout later
-    alert("Checkout functionality will be implemented soon!");
+    router.push("/checkout");
   };
 
   if (items.length === 0) {
