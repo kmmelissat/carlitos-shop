@@ -97,6 +97,12 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
             >
               Home
             </Link>
+            <Link
+              href="/products"
+              className="text-gray-700 hover:text-orange-600 font-medium"
+            >
+              Products
+            </Link>
 
             {loading ? (
               // Show loading state - just empty space or minimal loading indicator
@@ -294,6 +300,13 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
+              </Link>
+              <Link
+                href="/products"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Products
               </Link>
 
               {loading ? (

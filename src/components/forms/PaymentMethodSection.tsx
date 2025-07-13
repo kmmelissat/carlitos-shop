@@ -234,7 +234,7 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
               >
                 <div className="text-gray-700">Bank Name:</div>
                 <div className="text-right text-gray-900 font-semibold">
-                  Carlitos Bank
+                  Banco Agricola
                 </div>
                 <div className="text-gray-700">Account Number:</div>
                 <div className="text-right text-gray-900 font-semibold">

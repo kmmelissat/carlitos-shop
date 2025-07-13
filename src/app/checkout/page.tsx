@@ -11,6 +11,7 @@ import {
   Card,
   Divider,
   message,
+  Tooltip,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -30,7 +31,9 @@ import {
   PaymentMethod,
   DeliveryOption,
 } from "@/types";
+import { createOrder } from "@/lib/api";
 import PaymentMethodSection from "@/components/forms/PaymentMethodSection";
+import DeliveryOptionSection from "@/components/forms/DeliveryOptionSection";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -106,41 +109,30 @@ const CheckoutPage: React.FC = () => {
 
   const handleSubmit = async (values: CheckoutFormData) => {
     setSubmitting(true);
-
     try {
-      // Simulate order processing
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Create order object
       const order = {
-        id: `order_${Date.now()}`,
         userId: user.id,
+        userEmail: user.email,
+        userName: user.name,
         items,
         subtotal: total,
         tax: calculateTax(),
         total: calculateTotal(),
-        paymentMethod: values.paymentMethod,
-        deliveryOption: values.deliveryOption,
+        paymentMethod: values.paymentMethod || {},
+        deliveryOption: values.deliveryOption || {},
         customerNotes: values.customerNotes,
         status: {
           status: "pending" as const,
           updatedAt: new Date(),
           notes: "Order placed successfully",
         },
-        createdAt: new Date(),
-        updatedAt: new Date(),
       };
-
-      // Clear cart after successful order
+      const orderId = await createOrder(order);
       clearCart();
-
-      // Show success message
       message.success(
         "Order placed successfully! Carlitos will contact you soon."
       );
-
-      // Redirect to order confirmation
-      router.push(`/orders/${order.id}`);
+      router.push(`/orders/${orderId}/confirmation`);
     } catch (error) {
       console.error("Error placing order:", error);
       message.error("Failed to place order. Please try again.");
@@ -222,98 +214,36 @@ const CheckoutPage: React.FC = () => {
               <PaymentMethodSection form={form} />
 
               {/* Delivery Options */}
-              <Card className="mb-6">
-                <div className="flex items-center mb-4">
-                  <EnvironmentOutlined className="text-xl text-gray-700 mr-3" />
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    Delivery Options
-                  </h2>
-                </div>
-
-                <Form.Item
-                  name={["deliveryOption", "type"]}
-                  rules={[{ required: true }]}
-                >
-                  <Radio.Group className="w-full">
-                    <div className="space-y-4">
-                      {deliveryOptions.map((option) => (
-                        <Radio
-                          key={option.type}
-                          value={option.type}
-                          className="w-full"
-                        >
-                          <div className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-orange-300 transition-colors">
-                            <div className="mr-4">{option.icon}</div>
-                            <div className="flex-1">
-                              <div className="font-semibold text-gray-900">
-                                {option.title}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                {option.description}
-                              </div>
-                            </div>
-                          </div>
-                        </Radio>
-                      ))}
-                    </div>
-                  </Radio.Group>
-                </Form.Item>
-
-                {/* Location Details */}
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Form.Item
-                      name={["deliveryOption", "location", "building"]}
-                      label="Building"
-                      rules={[
-                        { required: true, message: "Please enter building" },
-                      ]}
-                    >
-                      <Input placeholder="e.g., Main Building, Science Center" />
-                    </Form.Item>
-                    <Form.Item
-                      name={["deliveryOption", "location", "classroom"]}
-                      label="Classroom/Office"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter classroom/office",
-                        },
-                      ]}
-                    >
-                      <Input placeholder="e.g., Room 101, Office 205" />
-                    </Form.Item>
-                  </div>
-
-                  <Form.Item
-                    name={["deliveryOption", "location", "additionalInfo"]}
-                    label="Additional Information"
-                  >
-                    <Input placeholder="e.g., 2nd floor, near elevator" />
-                  </Form.Item>
-
-                  <Form.Item
-                    name={["deliveryOption", "preferredTime"]}
-                    label="Preferred Time"
-                  >
-                    <Select placeholder="Select preferred time">
-                      <Option value="asap">As soon as possible</Option>
-                      <Option value="lunch">During lunch break</Option>
-                      <Option value="afternoon">Afternoon</Option>
-                      <Option value="evening">Evening</Option>
-                    </Select>
-                  </Form.Item>
-                </div>
-              </Card>
+              <DeliveryOptionSection form={form} />
 
               {/* Additional Notes */}
-              <Card className="mb-6">
-                <Form.Item name="customerNotes" label="Additional Notes">
+              <Card className="mb-6 bg-yellow-50 border-yellow-200 rounded-2xl shadow-sm">
+                <div className="flex items-center mb-2">
+                  <span className="material-icons-round text-yellow-600 mr-2">
+                    sticky_note_2
+                  </span>
+                  <span className="font-semibold text-lg text-gray-900">
+                    Additional Notes
+                  </span>
+                  <Tooltip title="Add any special instructions for your delivery or payment.">
+                    <span className="material-icons-round text-gray-400 ml-2 cursor-pointer">
+                      info
+                    </span>
+                  </Tooltip>
+                </div>
+                <Form.Item name="customerNotes" className="mb-0">
                   <TextArea
                     rows={4}
-                    placeholder="Any special instructions for Carlitos..."
+                    maxLength={300}
+                    showCount
+                    placeholder="e.g., Please call when you arrive, or leave at the front desk"
+                    className="rounded-lg border border-yellow-200 focus:ring-yellow-500 focus:border-yellow-500"
                   />
                 </Form.Item>
+                <div className="text-xs text-gray-500 mt-1">
+                  Max 300 characters. This will be shared with Carlitos for your
+                  order.
+                </div>
               </Card>
             </Form>
           </div>

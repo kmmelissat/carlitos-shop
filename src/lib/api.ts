@@ -7,15 +7,10 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import {
-  Product,
-  ProductFormData,
-} from "@/types";
+import { Product, ProductFormData } from "@/types";
 
 // Colecciones de Firestore
 const PRODUCTS_COLLECTION = "products";
-
-
 
 // Obtener producto por ID
 export const getProductById = async (id: string): Promise<Product | null> => {
@@ -100,8 +95,31 @@ export const deleteProduct = async (id: string): Promise<void> => {
   }
 };
 
+// Utility to remove undefined fields recursively
+function removeUndefined(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(removeUndefined);
+  } else if (obj && typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([_, v]) => v !== undefined)
+        .map(([k, v]) => [k, removeUndefined(v)])
+    );
+  }
+  return obj;
+}
 
-
-
-
-
+// Crear orden
+export const createOrder = async (orderData: any): Promise<string> => {
+  try {
+    const cleanOrder = removeUndefined(orderData);
+    const docRef = await addDoc(collection(db, "orders"), {
+      ...cleanOrder,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    return docRef.id;
+  } catch (error: any) {
+    throw new Error(error.message || "Error al crear la orden");
+  }
+};
