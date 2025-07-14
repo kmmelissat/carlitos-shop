@@ -94,14 +94,16 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           <div className="hidden md:flex items-center space-x-3">
             <Link
               href="/"
-              className="flex items-center h-12 px-6 rounded-full font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg"
+              className="flex items-center h-10 px-4 rounded-full font-bold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg gap-2"
             >
+              <span className="material-icons-round text-sm">home</span>
               Home
             </Link>
             <Link
               href="/products"
-              className="flex items-center h-12 px-6 rounded-full font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg"
+              className="flex items-center h-10 px-4 rounded-full font-bold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg gap-2"
             >
+              <span className="material-icons-round text-sm">storefront</span>
               Products
             </Link>
 
@@ -116,8 +118,11 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 {user.role === UserRole.ADMIN && (
                   <Link
                     href="/admin"
-                    className="flex items-center h-12 px-6 rounded-full font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg"
+                    className="flex items-center h-10 px-4 rounded-full font-bold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg gap-2"
                   >
+                    <span className="material-icons-round text-sm">
+                      admin_panel_settings
+                    </span>
                     Admin Panel
                   </Link>
                 )}
@@ -125,13 +130,13 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 {/* Cart */}
                 <Link
                   href="/cart"
-                  className="relative flex items-center h-12 px-6 rounded-full font-semibold bg-gradient-to-br from-orange-100 to-red-100 hover:from-orange-200 hover:to-red-200 text-orange-600 hover:text-red-600 transition-all duration-200 shadow-md hover:shadow-lg"
+                  className="relative flex items-center h-10 px-4 rounded-full text-orange-600 hover:text-red-600 transition-colors duration-200"
                 >
-                  <span className="material-icons-round text-2xl">
+                  <span className="material-icons-round text-sm">
                     shopping_cart
                   </span>
                   {itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
+                    <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center border-2 border-white">
                       {itemCount}
                     </span>
                   )}
@@ -141,27 +146,35 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 <div className="relative">
                   <button
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 focus:outline-none"
+                    className="flex items-center justify-center h-10 w-10 rounded-full border-2 border-orange-400 shadow bg-gradient-to-br from-orange-500 to-red-500 text-white text-lg font-bold ring-2 ring-orange-200 focus:outline-none"
                   >
-                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-lg font-bold border-2 border-white shadow">
-                      {user.name?.charAt(0).toUpperCase() ||
-                        user.email?.charAt(0).toUpperCase() ||
-                        "U"}
-                    </div>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt="Profile"
+                        className="h-9 w-9 rounded-full object-cover"
                       />
-                    </svg>
+                    ) : (
+                      <span className="font-bold text-base">
+                        {user.name?.charAt(0).toUpperCase() ||
+                          user.email?.charAt(0).toUpperCase() ||
+                          "U"}
+                      </span>
+                    )}
                   </button>
+                  <svg
+                    className="w-4 h-4 absolute right-0 bottom-0 mb-1 mr-1 text-gray-400 pointer-events-none"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
 
                   {isMenuOpen && (
                     <div className="absolute right-0 mt-2 w-56 bg-white/95 rounded-2xl shadow-2xl border border-gray-200 py-2 z-50 backdrop-blur-lg">
@@ -206,14 +219,18 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               <>
                 <Link
                   href="/auth/login"
-                  className="text-gray-700 hover:text-orange-600 font-medium"
+                  className="flex items-center h-10 px-4 rounded-full font-bold border border-orange-200 text-gray-700 hover:text-orange-600 hover:bg-orange-50 hover:shadow-orange-100 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-lg gap-2"
                 >
+                  <span className="material-icons-round text-sm">login</span>
                   Sign In
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+                  className="flex items-center h-10 px-4 rounded-full font-bold bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 hover:shadow-lg hover:shadow-orange-200 hover:scale-105 transition-all duration-200 shadow-md gap-2"
                 >
+                  <span className="material-icons-round text-sm">
+                    person_add
+                  </span>
                   Sign Up
                 </Link>
               </>
