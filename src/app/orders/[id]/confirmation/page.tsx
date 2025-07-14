@@ -1,9 +1,16 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
-const OrderConfirmationPage = ({ params }: { params: { id: string } }) => {
-  const { id } = params;
+const OrderConfirmationPage = () => {
+  const params = useParams();
+  const id =
+    typeof params.id === "string"
+      ? params.id
+      : Array.isArray(params.id)
+      ? params.id[0]
+      : "";
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className="bg-white rounded-2xl shadow-lg p-10 text-center">
