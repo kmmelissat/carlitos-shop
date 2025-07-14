@@ -186,7 +186,7 @@ const HomePage = async () => {
       </div>
 
       {/* Featured Products */}
-      <div className="bg-white py-20">
+      <div className="bg-gradient-to-br from-orange-50 via-white to-pink-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="flex items-center justify-center mb-6">
@@ -296,11 +296,6 @@ const HomePage = async () => {
                     verified
                   </span>
                 </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="material-icons-round text-sm text-white">
-                    check
-                  </span>
-                </div>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
                 Premium Quality
@@ -322,11 +317,6 @@ const HomePage = async () => {
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <span className="material-icons-round text-3xl text-white">
                     local_shipping
-                  </span>
-                </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="material-icons-round text-sm text-white">
-                    flash_on
                   </span>
                 </div>
               </div>
@@ -352,11 +342,6 @@ const HomePage = async () => {
                     payments
                   </span>
                 </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
-                  <span className="material-icons-round text-sm text-white">
-                    savings
-                  </span>
-                </div>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">
                 Best Prices Guaranteed
@@ -378,11 +363,6 @@ const HomePage = async () => {
                 <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <span className="material-icons-round text-3xl text-white">
                     support_agent
-                  </span>
-                </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                  <span className="material-icons-round text-sm text-white">
-                    favorite
                   </span>
                 </div>
               </div>
@@ -479,28 +459,71 @@ const HomePage = async () => {
       {/* Stats Section */}
       <div className="bg-gray-100 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl font-bold text-orange-600 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            {/* Products */}
+            <div className="bg-white rounded-2xl shadow-md border border-orange-100 flex flex-col items-center p-8 animate-scale-in">
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-orange-600 mb-4 shadow">
+                <span className="material-icons-round text-white text-3xl">
+                  shopping_bag
+                </span>
+              </div>
+              <div className="text-4xl font-extrabold text-orange-600 mb-2">
                 500+
               </div>
-              <div className="text-gray-600">Available products</div>
+              <div className="text-gray-600 text-lg font-medium">
+                Available products
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-600 mb-2">
+            {/* Customers */}
+            <div
+              className="bg-white rounded-2xl shadow-md border border-green-100 flex flex-col items-center p-8 animate-scale-in"
+              style={{ animationDelay: "0.1s" }}
+            >
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-emerald-500 mb-4 shadow">
+                <span className="material-icons-round text-white text-3xl">
+                  groups
+                </span>
+              </div>
+              <div className="text-4xl font-extrabold text-green-600 mb-2">
                 1000+
               </div>
-              <div className="text-gray-600">Satisfied customers</div>
+              <div className="text-gray-600 text-lg font-medium">
+                Satisfied customers
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-600 mb-2">
+            {/* Support */}
+            <div
+              className="bg-white rounded-2xl shadow-md border border-blue-100 flex flex-col items-center p-8 animate-scale-in"
+              style={{ animationDelay: "0.2s" }}
+            >
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-cyan-500 mb-4 shadow">
+                <span className="material-icons-round text-white text-3xl">
+                  support_agent
+                </span>
+              </div>
+              <div className="text-4xl font-extrabold text-blue-600 mb-2">
                 24/7
               </div>
-              <div className="text-gray-600">Customer support</div>
+              <div className="text-gray-600 text-lg font-medium">
+                Customer support
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-orange-600 mb-2">99%</div>
-              <div className="text-gray-600">Satisfaction guaranteed</div>
+            {/* Satisfaction */}
+            <div
+              className="bg-white rounded-2xl shadow-md border border-pink-100 flex flex-col items-center p-8 animate-scale-in"
+              style={{ animationDelay: "0.3s" }}
+            >
+              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-red-500 mb-4 shadow">
+                <span className="material-icons-round text-white text-3xl">
+                  emoji_events
+                </span>
+              </div>
+              <div className="text-4xl font-extrabold text-pink-600 mb-2">
+                99%
+              </div>
+              <div className="text-gray-600 text-lg font-medium">
+                Satisfaction guaranteed
+              </div>
             </div>
           </div>
         </div>

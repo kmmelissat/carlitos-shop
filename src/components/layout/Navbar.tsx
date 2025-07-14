@@ -36,12 +36,13 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
 
   return (
     <nav
-      className={`bg-white shadow-md border-b border-gray-200 sticky top-0 z-50 ${
+      className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-7xl w-[95vw] md:w-[90vw] rounded-full shadow-xl bg-white/80 backdrop-blur-lg border border-gray-200 transition-all duration-300 ${
         className || ""
       }`}
+      style={{ marginLeft: "auto", marginRight: "auto" }}
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24">
+      <div className="px-4 sm:px-8 py-2">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-4">
             <Image
@@ -49,9 +50,9 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               alt="Carlitos Store"
               width={160}
               height={160}
-              className="h-12 w-auto"
+              className="h-14 w-auto drop-shadow-md"
             />
-            <span className="text-2xl font-bold text-[#09112A] hidden sm:block">
+            <span className="text-2xl font-extrabold text-[#09112A] hidden sm:block tracking-tight">
               Carlito's ESEN
             </span>
           </Link>
@@ -65,11 +66,11 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search products..."
-                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-5 py-2 pr-12 border border-gray-200 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-400 bg-white/90 text-gray-900 transition-all duration-200"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600 transition-colors"
                 >
                   <svg
                     className="w-5 h-5"
@@ -90,16 +91,16 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           </div>
 
           {/* Navigation Links - Desktop */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-3">
             <Link
               href="/"
-              className="text-gray-700 hover:text-orange-600 font-medium"
+              className="rounded-full px-5 py-2 font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg transform hover:scale-105"
             >
               Home
             </Link>
             <Link
               href="/products"
-              className="text-gray-700 hover:text-orange-600 font-medium"
+              className="rounded-full px-5 py-2 font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg transform hover:scale-105"
             >
               Products
             </Link>
@@ -111,18 +112,11 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               </div>
             ) : user ? (
               <>
-                <Link
-                  href="/profile"
-                  className="text-gray-700 hover:text-orange-600 font-medium"
-                >
-                  Profile
-                </Link>
-
                 {/* Only show for ADMIN */}
                 {user.role === UserRole.ADMIN && (
                   <Link
                     href="/admin"
-                    className="text-gray-700 hover:text-orange-600 font-medium"
+                    className="rounded-full px-5 py-2 font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg transform hover:scale-105"
                   >
                     Admin Panel
                   </Link>
@@ -131,10 +125,10 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 {/* Cart */}
                 <Link
                   href="/cart"
-                  className="relative text-gray-700 hover:text-orange-600"
+                  className="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-orange-100 to-red-100 hover:from-orange-200 hover:to-red-200 transition-all duration-200 shadow-md hover:shadow-lg group"
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-7 h-7 text-orange-600 group-hover:text-red-600 transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -147,7 +141,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                     />
                   </svg>
                   {itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
                       {itemCount}
                     </span>
                   )}
@@ -157,9 +151,9 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 <div className="relative">
                   <button
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600"
+                    className="flex items-center space-x-2 text-gray-700 hover:text-orange-600 focus:outline-none"
                   >
-                    <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-lg font-bold border-2 border-white shadow">
                       {user.name?.charAt(0).toUpperCase() ||
                         user.email?.charAt(0).toUpperCase() ||
                         "U"}
@@ -180,7 +174,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                   </button>
 
                   {isMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <div className="absolute right-0 mt-2 w-56 bg-white/95 rounded-2xl shadow-2xl border border-gray-200 py-2 z-50 backdrop-blur-lg">
                       <Link
                         href="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600"
@@ -240,10 +234,10 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-orange-600 focus:outline-none focus:text-orange-600"
+              className="text-gray-700 hover:text-orange-600 focus:outline-none focus:text-orange-600 bg-white/80 rounded-full p-2 shadow border border-gray-200 transition-all duration-200"
             >
               <svg
-                className="w-6 h-6"
+                className="w-7 h-7"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -262,7 +256,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
         {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
+            <div className="px-4 pt-4 pb-6 space-y-2 bg-white/95 rounded-3xl shadow-2xl border border-gray-200 mt-2 mx-2 backdrop-blur-lg">
               {/* Mobile Search */}
               <form onSubmit={handleSearch} className="mb-4">
                 <div className="relative">
@@ -271,11 +265,11 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search products..."
-                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-5 py-2 pr-12 border border-gray-200 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-400 bg-white/90 text-gray-900 transition-all duration-200"
                   />
                   <button
                     type="submit"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600"
                   >
                     <svg
                       className="w-5 h-5"
@@ -316,13 +310,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 </div>
               ) : user ? (
                 <>
-                  <Link
-                    href="/profile"
-                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
+                  {/* Remove Profile link from mobile menu */}
                   <Link
                     href="/cart"
                     className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-orange-600"
@@ -357,7 +345,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                   </Link>
                   <Link
                     href="/auth/register"
-                    className="block px-3 py-2 text-base font-medium bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+                    className="block px-3 py-2 text-base font-medium bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-full hover:from-orange-700 hover:to-red-700 shadow-md hover:shadow-lg transition-all duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign Up

@@ -114,7 +114,9 @@ export default async function RootLayout({
           <CartProvider>
             <ConfigProvider theme={antdTheme}>
               <ClientWrapper serverUser={serverUser}>
-                {children}
+                <div className="pt-[140px] min-h-screen bg-gray-50">
+                  {children}
+                </div>
                 <ToastContainer />
               </ClientWrapper>
             </ConfigProvider>
