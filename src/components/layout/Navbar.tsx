@@ -94,13 +94,13 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           <div className="hidden md:flex items-center space-x-3">
             <Link
               href="/"
-              className="rounded-full px-5 py-2 font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg transform hover:scale-105"
+              className="flex items-center h-12 px-6 rounded-full font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg"
             >
               Home
             </Link>
             <Link
               href="/products"
-              className="rounded-full px-5 py-2 font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg transform hover:scale-105"
+              className="flex items-center h-12 px-6 rounded-full font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg"
             >
               Products
             </Link>
@@ -116,7 +116,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 {user.role === UserRole.ADMIN && (
                   <Link
                     href="/admin"
-                    className="rounded-full px-5 py-2 font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg transform hover:scale-105"
+                    className="flex items-center h-12 px-6 rounded-full font-semibold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg"
                   >
                     Admin Panel
                   </Link>
@@ -125,21 +125,11 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                 {/* Cart */}
                 <Link
                   href="/cart"
-                  className="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-orange-100 to-red-100 hover:from-orange-200 hover:to-red-200 transition-all duration-200 shadow-md hover:shadow-lg group"
+                  className="relative flex items-center h-12 px-6 rounded-full font-semibold bg-gradient-to-br from-orange-100 to-red-100 hover:from-orange-200 hover:to-red-200 text-orange-600 hover:text-red-600 transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  <svg
-                    className="w-7 h-7 text-orange-600 group-hover:text-red-600 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.68 8.32a2 2 0 01-1.98 1.68H9m6 0v-1a2 2 0 00-2-2H9a2 2 0 00-2 2v1m6 0h6"
-                    />
-                  </svg>
+                  <span className="material-icons-round text-2xl">
+                    shopping_cart
+                  </span>
                   {itemCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center border-2 border-white">
                       {itemCount}
