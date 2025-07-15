@@ -112,14 +112,39 @@ function removeUndefined(obj: any): any {
 // Crear orden
 export const createOrder = async (orderData: any): Promise<string> => {
   try {
+    console.log("🔄 Starting order creation...");
+    console.log("📝 Original order data:", orderData);
+
     const cleanOrder = removeUndefined(orderData);
-    const docRef = await addDoc(collection(db, "orders"), {
+    console.log("🧹 Cleaned order data:", cleanOrder);
+
+    // Ensure required fields are present
+    if (!cleanOrder.userId || !cleanOrder.items || !cleanOrder.total) {
+      throw new Error("Missing required order fields");
+    }
+
+    // Add timestamps
+    const orderWithTimestamps = {
       ...cleanOrder,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    };
+
+    console.log("⏰ Order with timestamps:", orderWithTimestamps);
+
+    const docRef = await addDoc(collection(db, "orders"), orderWithTimestamps);
+    console.log("✅ Order created with ID:", docRef.id);
+
+    // Verify the order was created
+    const orderDoc = await getDoc(docRef);
+    if (!orderDoc.exists()) {
+      throw new Error("Order was not created properly");
+    }
+
+    console.log("✨ Order verified in database");
     return docRef.id;
   } catch (error: any) {
+    console.error("❌ Error creating order:", error);
     throw new Error(error.message || "Error al crear la orden");
   }
 };

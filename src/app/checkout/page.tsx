@@ -107,9 +107,10 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handleSubmit = async (values: CheckoutFormData) => {
-    console.log("Form submitted with values:", values);
-    console.log("Cart items:", items);
-    console.log("User:", user);
+    console.log("🚀 Starting order submission...");
+    console.log("📝 Form values:", values);
+    console.log("🛒 Cart items:", items);
+    console.log("👤 User:", user);
 
     setSubmitting(true);
     try {
@@ -134,14 +135,12 @@ const CheckoutPage: React.FC = () => {
           updatedAt: new Date(),
           notes: "Order placed successfully",
         },
+        createdAt: new Date(), // Add this line to ensure createdAt is set
       };
 
-      console.log("Creating order with data:", order);
+      console.log("📦 Creating order with data:", order);
       const orderId = await createOrder(order);
-      console.log("Order created successfully with ID:", orderId);
-
-      // Clear cart first to prevent issues if navigation fails
-      clearCart();
+      console.log("✅ Order created successfully with ID:", orderId);
 
       // Show success message
       showToast(
@@ -149,11 +148,27 @@ const CheckoutPage: React.FC = () => {
         "success",
         4000
       );
+      console.log("🔔 Success toast shown");
 
-      // Navigate to confirmation page and replace the history entry
-      router.replace(`/orders/${orderId}/confirmation`);
+      // Navigate to confirmation page
+      const confirmationUrl = `/orders/${orderId}/confirmation`;
+      console.log("🔄 Attempting to navigate to:", confirmationUrl);
+
+      try {
+        // Clear cart before navigation
+        clearCart();
+        console.log("🧹 Cart cleared");
+
+        // Force a hard navigation to ensure proper page load
+        window.location.href = confirmationUrl;
+        console.log("✨ Navigation completed successfully");
+      } catch (error) {
+        console.error("❌ Navigation failed:", error);
+        // If all else fails, try one last time with router.push
+        router.push(confirmationUrl);
+      }
     } catch (error) {
-      console.error("Error placing order:", error);
+      console.error("❌ Error placing order:", error);
       showToast("Failed to place order. Please try again.", "error", 4000);
     } finally {
       setSubmitting(false);

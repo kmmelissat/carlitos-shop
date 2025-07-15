@@ -11,42 +11,56 @@ import { Button, Card } from "antd";
 const OrderConfirmationPage = () => {
   const router = useRouter();
   const params = useParams();
+  console.log("🔍 Confirmation page params:", params);
+
   const id =
     typeof params.id === "string"
       ? params.id
       : Array.isArray(params.id)
       ? params.id[0]
       : "";
+  console.log("📄 Order ID:", id);
+
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
+      console.log("🔄 Starting to fetch order data...");
       if (!id) {
+        console.error("❌ Invalid order ID");
         setError("Invalid order ID");
         setLoading(false);
         return;
       }
 
       try {
+        console.log("📥 Fetching order document from Firestore...");
         const orderDoc = await getDoc(doc(db, "orders", id));
+
         if (orderDoc.exists()) {
           const data = orderDoc.data();
+          console.log("✅ Order data retrieved:", data);
+
           // Ensure createdAt is properly handled
           const createdAt = data.createdAt?.toDate?.() || new Date();
+          console.log("📅 Formatted createdAt:", createdAt);
+
           setOrder({
             id: orderDoc.id,
             ...data,
             createdAt,
           });
         } else {
+          console.error("❌ Order document not found");
           setError("Order not found");
         }
       } catch (error) {
-        console.error("Error fetching order:", error);
+        console.error("❌ Error fetching order:", error);
         setError("Failed to load order details");
       } finally {
+        console.log("🏁 Finished fetching order");
         setLoading(false);
       }
     };
@@ -56,7 +70,7 @@ const OrderConfirmationPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-20">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading order details...</p>
@@ -67,7 +81,7 @@ const OrderConfirmationPage = () => {
 
   if (error || !order) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-20">
         <div className="text-center">
           <span className="material-icons-round text-red-500 text-6xl mb-4">
             error_outline
@@ -81,13 +95,13 @@ const OrderConfirmationPage = () => {
           <div className="space-x-4">
             <Link
               href="/products"
-              className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700"
+              className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
             >
               Continue Shopping
             </Link>
             <button
               onClick={() => router.back()}
-              className="inline-block px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300"
+              className="inline-block px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
             >
               Go Back
             </button>
@@ -98,8 +112,8 @@ const OrderConfirmationPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 pt-20">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Success Header */}
         <div className="text-center mb-8">
           <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -135,13 +149,13 @@ const OrderConfirmationPage = () => {
                 </p>
               </div>
               <div className="mt-4 md:mt-0 space-x-3">
-                <Button type="default" className="bg-white">
+                <Button type="default" className="bg-white hover:bg-gray-100">
                   Download Invoice
                 </Button>
                 <Link href={`/orders/${id}`}>
                   <Button
                     type="primary"
-                    className="bg-yellow-400 border-none hover:bg-yellow-500"
+                    className="bg-yellow-400 border-none hover:bg-yellow-500 text-black"
                   >
                     Track order
                   </Button>
@@ -155,11 +169,11 @@ const OrderConfirmationPage = () => {
             {order.items.map((item: any) => (
               <div
                 key={item.product.id}
-                className="flex items-center justify-between"
+                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-100"
               >
                 <div className="flex items-center space-x-4">
                   {item.product.images?.[0] && (
-                    <div className="w-16 h-16 relative rounded-lg overflow-hidden">
+                    <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-gray-200">
                       <Image
                         src={item.product.images[0]}
                         alt={item.product.name}
@@ -177,7 +191,7 @@ const OrderConfirmationPage = () => {
                     </p>
                   </div>
                 </div>
-                <span className="font-medium">
+                <span className="font-medium text-gray-900">
                   ${(item.quantity * item.product.price).toFixed(2)}
                 </span>
               </div>
@@ -193,7 +207,7 @@ const OrderConfirmationPage = () => {
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping cost</span>
-                <span>Free</span>
+                <span className="text-green-600">Free</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Tax</span>
@@ -207,7 +221,9 @@ const OrderConfirmationPage = () => {
               )}
               <div className="flex justify-between text-lg font-semibold text-gray-900 pt-2 border-t">
                 <span>Total Cost</span>
-                <span>${order.total.toFixed(2)}</span>
+                <span className="text-orange-600">
+                  ${order.total.toFixed(2)}
+                </span>
               </div>
             </div>
           </div>
@@ -218,7 +234,7 @@ const OrderConfirmationPage = () => {
               <h3 className="font-medium text-gray-900 mb-2">
                 Delivery Method
               </h3>
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
                 <span className="material-icons-round text-gray-400">
                   local_shipping
                 </span>
@@ -237,7 +253,7 @@ const OrderConfirmationPage = () => {
             </div>
             <div>
               <h3 className="font-medium text-gray-900 mb-2">Payment Method</h3>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
                 <span className="material-icons-round text-gray-400">
                   payments
                 </span>
@@ -250,18 +266,18 @@ const OrderConfirmationPage = () => {
 
           {/* Need Help Section */}
           <div className="mt-8 pt-6 border-t">
-            <h3 className="font-medium text-gray-900 mb-2">Need help?</h3>
+            <h3 className="font-medium text-gray-900 mb-4">Need help?</h3>
             <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6">
               <Link
                 href="/help"
-                className="text-orange-600 hover:text-orange-700 flex items-center"
+                className="text-orange-600 hover:text-orange-700 flex items-center transition-colors"
               >
                 <span className="material-icons-round mr-2">help_outline</span>
                 Visit our help center
               </Link>
               <Link
                 href="/contact"
-                className="text-orange-600 hover:text-orange-700 flex items-center"
+                className="text-orange-600 hover:text-orange-700 flex items-center transition-colors"
               >
                 <span className="material-icons-round mr-2">mail_outline</span>
                 Contact support

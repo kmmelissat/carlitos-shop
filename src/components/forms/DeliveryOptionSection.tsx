@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { Form, Input, Select } from "antd";
 import { DeliveryType } from "@/types";

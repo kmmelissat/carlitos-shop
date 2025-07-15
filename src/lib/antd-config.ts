@@ -26,8 +26,4 @@ export const antdConfig = {
       },
     },
   },
-  // Disable compatibility warnings
-  warning: {
-    showWarning: false,
-  },
 } as const;
