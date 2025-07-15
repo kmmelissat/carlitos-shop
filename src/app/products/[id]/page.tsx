@@ -54,7 +54,6 @@ const ProductDetailPage: React.FC = () => {
 
     if (product) {
       addItem(product, quantity);
-      showToast(`${product.name} added to cart!`, "success", 3000);
     }
   };
 

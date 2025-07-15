@@ -1,47 +1,15 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../styles/globals.css";
-import "antd/dist/reset.css";
+import "@/styles/globals.css";
+import { Metadata } from "next";
 import { cookies } from "next/headers";
 import admin from "firebase-admin";
 import { AuthUser, UserRole } from "@/types";
-import { AuthProvider, CartProvider } from "@/store";
-import { ToastContainer } from "@/components/ui/Toast";
-import ClientWrapper from "@/components/layout/ClientWrapper";
-import { ConfigProvider } from "antd";
-
-const inter = Inter({ subsets: ["latin"] });
+import { ClientWrapper } from "@/components";
+import { App, ConfigProvider } from "antd";
+import { antdConfig } from "@/lib/antd-config";
 
 export const metadata: Metadata = {
-  title: "Carlito's ESEN - Campus Store",
-  description:
-    "Your favorite marketplace for snacks, sweets, and beverages on campus",
-};
-
-// Ant Design Orange Theme
-const antdTheme = {
-  token: {
-    colorPrimary: "#ea580c", // Orange-600 - same as the app
-    colorInfo: "#ea580c",
-    colorSuccess: "#16a34a",
-    colorWarning: "#d97706",
-    colorError: "#dc2626",
-    borderRadius: 8,
-  },
-  components: {
-    Button: {
-      colorPrimary: "#ea580c", // Orange-600
-      colorPrimaryHover: "#c2410c", // Orange-700
-      colorPrimaryActive: "#9a3412", // Orange-800
-    },
-    Select: {
-      colorPrimary: "#ea580c", // Orange-600
-      colorPrimaryHover: "#c2410c", // Orange-700
-      controlOutline: "rgba(234, 88, 12, 0.2)", // Orange-600 with transparency
-      colorBorder: "#fed7aa", // Orange-200 for border
-      colorBorderHover: "#ea580c", // Orange-600 for hover border
-    },
-  },
+  title: "CarlitosStore",
+  description: "Your favorite snack store at ESEN",
 };
 
 // Initialize Firebase Admin if not already initialized
@@ -86,10 +54,11 @@ async function getServerUser(): Promise<AuthUser | null> {
       email: decodedToken.email || "",
       name: decodedToken.name || userData.displayName || "",
       role: userData.role || UserRole.USER,
-      isVerified: userData.isVerified || false,
+      isVerified: decodedToken.email_verified || false,
+      avatar: userData.avatar,
     };
   } catch (error) {
-    // If there's any error, treat as unauthenticated
+    console.error("Error getting server user:", error);
     return null;
   }
 }
@@ -109,19 +78,12 @@ export default async function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.className} antialiased`}>
-        <AuthProvider>
-          <CartProvider>
-            <ConfigProvider theme={antdTheme}>
-              <ClientWrapper serverUser={serverUser}>
-                <div className="pt-[140px] min-h-screen bg-gray-50">
-                  {children}
-                </div>
-                <ToastContainer />
-              </ClientWrapper>
-            </ConfigProvider>
-          </CartProvider>
-        </AuthProvider>
+      <body>
+        <ConfigProvider {...antdConfig}>
+          <App>
+            <ClientWrapper serverUser={serverUser}>{children}</ClientWrapper>
+          </App>
+        </ConfigProvider>
       </body>
     </html>
   );

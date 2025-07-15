@@ -46,6 +46,21 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
   const handleSelectPayment = (type: PaymentMethodType) => {
     setSelectedPayment(type);
     form.setFieldsValue({ paymentMethod: { type } });
+
+    // Clear card details when switching away from card payment
+    if (type !== PaymentMethodType.CARD) {
+      form.setFieldsValue({
+        paymentMethod: {
+          type,
+          details: {
+            cardNumber: undefined,
+            cardHolder: undefined,
+            expiryDate: undefined,
+            cvv: undefined,
+          },
+        },
+      });
+    }
   };
 
   return (
@@ -164,7 +179,12 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
               label={
                 <span className="font-semibold text-gray-900">Card Number</span>
               }
-              rules={[{ required: true, message: "Please enter card number" }]}
+              rules={[
+                {
+                  required: selectedPayment === PaymentMethodType.CARD,
+                  message: "Please enter card number",
+                },
+              ]}
               className="mb-0"
             >
               <Input
@@ -181,7 +201,10 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
                 </span>
               }
               rules={[
-                { required: true, message: "Please enter cardholder name" },
+                {
+                  required: selectedPayment === PaymentMethodType.CARD,
+                  message: "Please enter cardholder name",
+                },
               ]}
               className="mb-0"
             >
@@ -196,7 +219,12 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
               label={
                 <span className="font-semibold text-gray-900">Expiry Date</span>
               }
-              rules={[{ required: true, message: "Please enter expiry date" }]}
+              rules={[
+                {
+                  required: selectedPayment === PaymentMethodType.CARD,
+                  message: "Please enter expiry date",
+                },
+              ]}
               className="mb-0"
             >
               <Input
@@ -208,7 +236,12 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
             <Form.Item
               name={["paymentMethod", "details", "cvv"]}
               label={<span className="font-semibold text-gray-900">CVV</span>}
-              rules={[{ required: true, message: "Please enter CVV" }]}
+              rules={[
+                {
+                  required: selectedPayment === PaymentMethodType.CARD,
+                  message: "Please enter CVV",
+                },
+              ]}
               className="mb-0"
             >
               <Input
@@ -250,51 +283,24 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
                 </div>
               </div>
             </div>
-            <Form.Item
-              name={["paymentMethod", "details", "transferReference"]}
-              label={
-                <span className="font-semibold text-gray-900">
-                  Transfer Reference ID
-                </span>
-              }
-              rules={[
-                { required: true, message: "Please enter transfer reference" },
-              ]}
-              className="mb-0"
-            >
-              <Input
-                placeholder="Enter your transfer reference ID"
-                className="h-12 text-base placeholder-gray-400"
-                style={{ fontFamily: "Mona Sans" }}
-              />
-            </Form.Item>
-            <div
-              className="text-sm text-gray-500 mt-2"
-              style={{ fontFamily: "Mona Sans" }}
-            >
-              Please enter the reference ID from your bank transfer receipt
-            </div>
           </div>
         )}
         {selectedPayment === PaymentMethodType.CASH_ON_DELIVERY && (
-          <div className="mt-6 bg-green-50 rounded-2xl p-6 flex flex-col items-center">
-            <span className="flex items-center justify-center w-14 h-14 rounded-full bg-green-200 text-green-600 text-3xl mb-4">
-              <span className="material-icons-round text-4xl">
-                attach_money
-              </span>
-            </span>
-            <div
-              className="font-bold text-xl text-green-700 mb-2"
-              style={{ fontFamily: "Mona Sans" }}
-            >
-              Cash on Delivery Selected
-            </div>
-            <div
-              className="text-green-700 text-base mb-4 text-center"
-              style={{ fontFamily: "Mona Sans" }}
-            >
-              You will pay in cash when Carlitos delivers your order to your
-              doorstep.
+          <div className="mt-6">
+            <div className="bg-green-50 rounded-2xl p-6 mb-6">
+              <div
+                className="font-bold text-xl text-green-700 mb-4"
+                style={{ fontFamily: "Mona Sans" }}
+              >
+                Cash on Delivery Selected
+              </div>
+              <div
+                className="text-green-700 text-base"
+                style={{ fontFamily: "Mona Sans" }}
+              >
+                You will pay with cash when Carlitos delivers your order. No
+                payment information needed.
+              </div>
             </div>
           </div>
         )}

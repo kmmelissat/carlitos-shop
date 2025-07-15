@@ -43,9 +43,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
       // Add item to cart
       addItem(product, 1);
 
-      // Show success toast
-      showToast(`${product.name} added to cart!`, "success", 3000);
-
       // Reset state
       setTimeout(() => {
         setIsAdding(false);

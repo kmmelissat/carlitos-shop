@@ -44,7 +44,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
       <div className="px-4 sm:px-8 py-2">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-4">
+          <Link href="/" className="flex items-center">
             <Image
               src="/carlitos-logo.svg"
               alt="Carlitos Store"
@@ -52,13 +52,10 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               height={160}
               className="h-14 w-auto drop-shadow-md"
             />
-            <span className="text-2xl font-extrabold text-[#09112A] hidden sm:block tracking-tight">
-              Carlito's ESEN
-            </span>
           </Link>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
+          <div className="hidden md:flex flex-1 max-w-md mx-4">
             <form onSubmit={handleSearch} className="w-full">
               <div className="relative">
                 <input
@@ -66,7 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search products..."
-                  className="w-full px-5 py-2 pr-12 border border-gray-200 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-400 bg-white/90 text-gray-900 transition-all duration-200"
+                  className="w-full px-5 py-2 pr-12 border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-400 bg-white/90 text-gray-900 transition-all duration-200"
                 />
                 <button
                   type="submit"
@@ -91,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           </div>
 
           {/* Navigation Links - Desktop */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center gap-2">
             <Link
               href="/"
               className="flex items-center h-10 px-4 rounded-full font-bold text-gray-700 hover:text-white bg-transparent hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all duration-200 shadow-sm hover:shadow-lg gap-2"
@@ -109,7 +106,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
 
             {loading ? (
               // Show loading state - just empty space or minimal loading indicator
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
               </div>
             ) : user ? (
@@ -132,11 +129,11 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
                   href="/cart"
                   className="relative flex items-center h-10 px-4 rounded-full text-orange-600 hover:text-red-600 transition-colors duration-200"
                 >
-                  <span className="material-icons-round text-sm">
+                  <span className="material-icons-round text-2xl">
                     shopping_cart
                   </span>
                   {itemCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center border-2 border-white">
+                    <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center shadow-md border-2 border-white">
                       {itemCount}
                     </span>
                   )}
@@ -265,14 +262,14 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
           <div className="md:hidden">
             <div className="px-4 pt-4 pb-6 space-y-2 bg-white/95 rounded-3xl shadow-2xl border border-gray-200 mt-2 mx-2 backdrop-blur-lg">
               {/* Mobile Search */}
-              <form onSubmit={handleSearch} className="mb-4">
+              <form onSubmit={handleSearch} className="mb-4 md:hidden">
                 <div className="relative">
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search products..."
-                    className="w-full px-5 py-2 pr-12 border border-gray-200 rounded-full shadow focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-400 bg-white/90 text-gray-900 transition-all duration-200"
+                    className="w-full px-5 py-2 pr-12 border border-gray-200 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-400 bg-white/90 text-gray-900 transition-all duration-200"
                   />
                   <button
                     type="submit"

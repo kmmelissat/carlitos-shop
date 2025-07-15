@@ -10,7 +10,6 @@ import {
   Radio,
   Card,
   Divider,
-  message,
   Tooltip,
 } from "antd";
 import {
@@ -108,8 +107,13 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handleSubmit = async (values: CheckoutFormData) => {
+    console.log("Form submitted with values:", values);
+    console.log("Cart items:", items);
+    console.log("User:", user);
+
     setSubmitting(true);
     try {
+      // Ensure we have the required data even if form validation fails
       const order = {
         userId: user.id,
         userEmail: user.email,
@@ -118,24 +122,39 @@ const CheckoutPage: React.FC = () => {
         subtotal: total,
         tax: calculateTax(),
         total: calculateTotal(),
-        paymentMethod: values.paymentMethod || {},
-        deliveryOption: values.deliveryOption || {},
-        customerNotes: values.customerNotes,
+        paymentMethod: values.paymentMethod || {
+          type: PaymentMethodType.CASH_ON_DELIVERY,
+        },
+        deliveryOption: values.deliveryOption || {
+          type: DeliveryType.DELIVER_TO_LOCATION,
+        },
+        customerNotes: values.customerNotes || "",
         status: {
           status: "pending" as const,
           updatedAt: new Date(),
           notes: "Order placed successfully",
         },
       };
+
+      console.log("Creating order with data:", order);
       const orderId = await createOrder(order);
+      console.log("Order created successfully with ID:", orderId);
+
+      // Clear cart first to prevent issues if navigation fails
       clearCart();
-      message.success(
-        "Order placed successfully! Carlitos will contact you soon."
+
+      // Show success message
+      showToast(
+        "Order placed successfully! Carlitos will contact you soon.",
+        "success",
+        4000
       );
-      router.push(`/orders/${orderId}/confirmation`);
+
+      // Navigate to confirmation page and replace the history entry
+      router.replace(`/orders/${orderId}/confirmation`);
     } catch (error) {
       console.error("Error placing order:", error);
-      message.error("Failed to place order. Please try again.");
+      showToast("Failed to place order. Please try again.", "error", 4000);
     } finally {
       setSubmitting(false);
     }

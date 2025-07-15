@@ -37,6 +37,21 @@ const DeliveryOptionSection: React.FC<DeliveryOptionSectionProps> = ({
   const handleSelectDelivery = (type: DeliveryType) => {
     setSelectedDelivery(type);
     form.setFieldsValue({ deliveryOption: { type } });
+
+    // Clear location details when switching to pickup
+    if (type === DeliveryType.PICKUP) {
+      form.setFieldsValue({
+        deliveryOption: {
+          type,
+          location: {
+            building: undefined,
+            classroom: undefined,
+            additionalInfo: undefined,
+          },
+          preferredTime: undefined,
+        },
+      });
+    }
   };
 
   return (
@@ -127,7 +142,13 @@ const DeliveryOptionSection: React.FC<DeliveryOptionSectionProps> = ({
               label={
                 <span className="font-semibold text-gray-900">Building</span>
               }
-              rules={[{ required: true, message: "Please enter building" }]}
+              rules={[
+                {
+                  required:
+                    selectedDelivery === DeliveryType.DELIVER_TO_LOCATION,
+                  message: "Please enter building",
+                },
+              ]}
               className="mb-0"
             >
               <Input
@@ -143,7 +164,11 @@ const DeliveryOptionSection: React.FC<DeliveryOptionSectionProps> = ({
                 </span>
               }
               rules={[
-                { required: true, message: "Please enter classroom/office" },
+                {
+                  required:
+                    selectedDelivery === DeliveryType.DELIVER_TO_LOCATION,
+                  message: "Please enter classroom/office",
+                },
               ]}
               className="mb-0"
             >
