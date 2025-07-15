@@ -58,8 +58,15 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const handleCheckout = () => {
-    router.push("/checkout");
+  const handleCheckout = async () => {
+    if (!user) {
+      showToast("Please sign in to checkout", "info", 4000);
+      router.push("/auth/login");
+      return;
+    }
+
+    // Use Next.js router for smooth navigation
+    await router.push("/checkout");
   };
 
   if (items.length === 0) {

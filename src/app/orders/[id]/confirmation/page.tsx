@@ -116,46 +116,62 @@ const OrderConfirmationPage = () => {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Success Header */}
         <div className="text-center mb-8">
-          <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="material-icons-round text-green-600 text-4xl">
+          <div className="bg-gradient-to-br from-orange-100 to-orange-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-100">
+            <span className="material-icons-round text-orange-600 text-5xl">
               check_circle
             </span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Thanks for your order!
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-6 text-lg">
             We'll send you a confirmation email with your order details.
           </p>
           <Link
             href="/products"
-            className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
+            className="inline-flex items-center px-8 py-3.5 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-full font-semibold hover:from-pink-600 hover:to-pink-700 transition-all duration-200 shadow-md hover:shadow-lg text-base"
           >
+            <span className="material-icons-round mr-2 text-xl">
+              shopping_bag
+            </span>
             Continue shopping
           </Link>
         </div>
 
         {/* Order Details Card */}
-        <Card className="rounded-xl shadow-lg overflow-hidden">
+        <Card className="rounded-2xl shadow-xl overflow-hidden border-0">
           {/* Order Header */}
-          <div className="bg-green-800 -mx-6 -mt-6 px-6 py-4 text-white mb-6">
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 -mx-6 -mt-6 px-6 py-6 text-white mb-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-xl font-semibold mb-1">
-                  Order ID: #{id.slice(-6).toUpperCase()}
+                <h2 className="text-2xl font-semibold mb-1">
+                  Order #{id.slice(-6).toUpperCase()}
                 </h2>
-                <p className="text-green-200">
+                <p className="text-orange-100">
                   Order Date: {format(order.createdAt, "PP")}
                 </p>
               </div>
-              <div className="mt-4 md:mt-0 space-x-3">
-                <Button type="default" className="bg-white hover:bg-gray-100">
+              <div className="mt-4 md:mt-0 space-x-4">
+                <Button
+                  type="default"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-none inline-flex items-center shadow-md hover:shadow-lg px-6 py-2 h-auto text-base"
+                  icon={
+                    <span className="material-icons-round mr-2 text-xl">
+                      download
+                    </span>
+                  }
+                >
                   Download Invoice
                 </Button>
                 <Link href={`/orders/${id}`}>
                   <Button
                     type="primary"
-                    className="bg-yellow-400 border-none hover:bg-yellow-500 text-black"
+                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-none inline-flex items-center shadow-md hover:shadow-lg px-6 py-2 h-auto text-base"
+                    icon={
+                      <span className="material-icons-round mr-2 text-xl">
+                        local_shipping
+                      </span>
+                    }
                   >
                     Track order
                   </Button>
@@ -169,11 +185,11 @@ const OrderConfirmationPage = () => {
             {order.items.map((item: any) => (
               <div
                 key={item.product.id}
-                className="flex items-center justify-between p-4 bg-white rounded-lg border border-gray-100"
+                className="flex items-center justify-between p-4 bg-orange-50/50 rounded-xl border border-orange-100"
               >
                 <div className="flex items-center space-x-4">
                   {item.product.images?.[0] && (
-                    <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-gray-200">
+                    <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-orange-100 shadow-sm">
                       <Image
                         src={item.product.images[0]}
                         alt={item.product.name}
@@ -199,7 +215,7 @@ const OrderConfirmationPage = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="border-t border-gray-200 pt-4">
+          <div className="border-t border-gray-100 pt-4">
             <div className="space-y-2">
               <div className="flex justify-between text-gray-600">
                 <span>Item cost</span>
@@ -207,7 +223,7 @@ const OrderConfirmationPage = () => {
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping cost</span>
-                <span className="text-green-600">Free</span>
+                <span className="text-green-600 font-medium">Free</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Tax</span>
@@ -219,9 +235,9 @@ const OrderConfirmationPage = () => {
                   <span>-${order.coupon.toFixed(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-lg font-semibold text-gray-900 pt-2 border-t">
+              <div className="flex justify-between text-lg font-semibold text-gray-900 pt-2 border-t border-gray-100">
                 <span>Total Cost</span>
-                <span className="text-orange-600">
+                <span className="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                   ${order.total.toFixed(2)}
                 </span>
               </div>
@@ -229,57 +245,95 @@ const OrderConfirmationPage = () => {
           </div>
 
           {/* Delivery & Payment Info */}
-          <div className="grid md:grid-cols-2 gap-6 mt-8 pt-6 border-t">
+          <div className="grid md:grid-cols-2 gap-6 mt-8 pt-6 border-t border-gray-100">
+            {/* Delivery Method */}
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
                 Delivery Method
               </h3>
-              <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
-                <span className="material-icons-round text-gray-400">
-                  local_shipping
-                </span>
-                <div>
-                  <p className="font-medium text-gray-800">
-                    {order.deliveryOption.type}
+              <div className="flex items-start space-x-4 p-5 bg-gradient-to-br from-green-50 to-green-50/30 rounded-2xl border border-green-100 shadow-sm">
+                <div className="w-12 h-12 flex items-center justify-center bg-green-100 rounded-xl">
+                  <span className="material-icons-round text-2xl text-green-600">
+                    {order.deliveryOption.type === "deliver_to_location"
+                      ? "local_shipping"
+                      : "store"}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900 mb-1">
+                    {order.deliveryOption.type === "deliver_to_location"
+                      ? "Deliver to Location"
+                      : "Store Pickup"}
                   </p>
                   {order.deliveryOption.location && (
-                    <p className="text-sm text-gray-600">
-                      {order.deliveryOption.location.building} -{" "}
-                      {order.deliveryOption.location.classroom}
-                    </p>
+                    <div className="space-y-1">
+                      <p className="text-gray-600 text-sm flex items-center">
+                        <span className="material-icons-round text-green-500 mr-1 text-base">
+                          apartment
+                        </span>
+                        Building: {order.deliveryOption.location.building}
+                      </p>
+                      <p className="text-gray-600 text-sm flex items-center">
+                        <span className="material-icons-round text-green-500 mr-1 text-base">
+                          meeting_room
+                        </span>
+                        Classroom: {order.deliveryOption.location.classroom}
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
             </div>
+
+            {/* Payment Method */}
             <div>
-              <h3 className="font-medium text-gray-900 mb-2">Payment Method</h3>
-              <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                <span className="material-icons-round text-gray-400">
-                  payments
-                </span>
-                <p className="font-medium text-gray-800">
-                  {order.paymentMethod.type}
-                </p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Payment Method
+              </h3>
+              <div className="flex items-start space-x-4 p-5 bg-gradient-to-br from-pink-50 to-pink-50/30 rounded-2xl border border-pink-100 shadow-sm">
+                <div className="w-12 h-12 flex items-center justify-center bg-pink-100 rounded-xl">
+                  <span className="material-icons-round text-2xl text-pink-600">
+                    {order.paymentMethod.type === "cash_on_delivery"
+                      ? "payments"
+                      : "account_balance"}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900 mb-1">
+                    {order.paymentMethod.type === "cash_on_delivery"
+                      ? "Cash on Delivery"
+                      : "Bank Transfer"}
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    {order.paymentMethod.type === "cash_on_delivery"
+                      ? "Pay with cash when your order arrives"
+                      : "Payment will be processed through bank transfer"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Need Help Section */}
-          <div className="mt-8 pt-6 border-t">
+          <div className="mt-8 pt-6 border-t border-gray-100">
             <h3 className="font-medium text-gray-900 mb-4">Need help?</h3>
-            <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6">
+            <div className="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-4">
               <Link
                 href="/help"
-                className="text-orange-600 hover:text-orange-700 flex items-center transition-colors"
+                className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-sm hover:shadow-md text-base"
               >
-                <span className="material-icons-round mr-2">help_outline</span>
+                <span className="material-icons-round mr-2 text-xl">
+                  help_outline
+                </span>
                 Visit our help center
               </Link>
               <Link
                 href="/contact"
-                className="text-orange-600 hover:text-orange-700 flex items-center transition-colors"
+                className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md text-base"
               >
-                <span className="material-icons-round mr-2">mail_outline</span>
+                <span className="material-icons-round mr-2 text-xl">
+                  mail_outline
+                </span>
                 Contact support
               </Link>
             </div>

@@ -60,19 +60,20 @@ const CheckoutPage: React.FC = () => {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!loading && !user) {
-      showToast("Please sign in to checkout", "info", 4000);
-      router.push("/auth/login");
-    }
-  }, [user, loading, router]);
+    if (!loading) {
+      if (!user) {
+        showToast("Please sign in to checkout", "info", 4000);
+        router.push("/auth/login");
+        return;
+      }
 
-  // Redirect to cart if empty
-  useEffect(() => {
-    if (items.length === 0 && !loading) {
-      showToast("Your cart is empty", "info", 4000);
-      router.push("/cart");
+      if (items.length === 0) {
+        showToast("Your cart is empty", "info", 4000);
+        router.push("/cart");
+        return;
+      }
     }
-  }, [items, loading, router]);
+  }, [user, loading, items, router]);
 
   // Show loading while checking authentication
   if (loading) {
@@ -112,7 +113,9 @@ const CheckoutPage: React.FC = () => {
     console.log("🛒 Cart items:", items);
     console.log("👤 User:", user);
 
+    if (submitting) return; // Prevent double submission
     setSubmitting(true);
+
     try {
       // Ensure we have the required data even if form validation fails
       const order = {
@@ -135,42 +138,29 @@ const CheckoutPage: React.FC = () => {
           updatedAt: new Date(),
           notes: "Order placed successfully",
         },
-        createdAt: new Date(), // Add this line to ensure createdAt is set
+        createdAt: new Date(),
       };
 
       console.log("📦 Creating order with data:", order);
       const orderId = await createOrder(order);
       console.log("✅ Order created successfully with ID:", orderId);
 
+      // Clear cart first
+      clearCart();
+      console.log("🧹 Cart cleared");
+
       // Show success message
       showToast(
-        "Order placed successfully! Carlitos will contact you soon.",
+        "Order placed successfully! Redirecting to confirmation...",
         "success",
-        4000
+        2000
       );
-      console.log("🔔 Success toast shown");
 
-      // Navigate to confirmation page
-      const confirmationUrl = `/orders/${orderId}/confirmation`;
-      console.log("🔄 Attempting to navigate to:", confirmationUrl);
-
-      try {
-        // Clear cart before navigation
-        clearCart();
-        console.log("🧹 Cart cleared");
-
-        // Force a hard navigation to ensure proper page load
-        window.location.href = confirmationUrl;
-        console.log("✨ Navigation completed successfully");
-      } catch (error) {
-        console.error("❌ Navigation failed:", error);
-        // If all else fails, try one last time with router.push
-        router.push(confirmationUrl);
-      }
+      // Use router.push for smooth navigation
+      await router.push(`/orders/${orderId}/confirmation`);
     } catch (error) {
       console.error("❌ Error placing order:", error);
       showToast("Failed to place order. Please try again.", "error", 4000);
-    } finally {
       setSubmitting(false);
     }
   };
