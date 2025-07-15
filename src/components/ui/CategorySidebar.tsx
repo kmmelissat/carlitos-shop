@@ -27,7 +27,7 @@ const categories = [
     name: "Dried Fruits",
     icon: "local_florist",
   },
-  { id: ProductCategory.HEALTHY, name: "Healthy", icon: "health_and_safety" },
+  { id: ProductCategory.HEALTHY, name: "Healthy Snacks", icon: "health_and_safety" },
   { id: ProductCategory.OTHER, name: "Other", icon: "category" },
 ];
 
