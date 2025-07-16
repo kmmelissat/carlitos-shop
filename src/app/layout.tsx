@@ -77,6 +77,7 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
           rel="stylesheet"
         />
+        <link rel="icon" href="/carlitos-logo.svg" type="image/svg+xml" />
       </head>
       <body>
         <ConfigProvider {...antdConfig}>
