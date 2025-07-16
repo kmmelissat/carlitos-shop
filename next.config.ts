@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
       "www.pinimg.com", // Add Pinterest www domain
       "lh3.googleusercontent.com", // Add Google user content domain
       "storage.googleapis.com", // Add Google Cloud Storage domain
+      "oaiusercontent.com", // Add OpenAI/ChatGPT images domain
+      "*.oaiusercontent.com", // Add OpenAI/ChatGPT subdomains
+      "sdmntprukwest.oaiusercontent.com", // Add specific OpenAI subdomain
     ],
   },
   // Disable ESLint during builds
