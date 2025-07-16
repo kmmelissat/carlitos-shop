@@ -65,11 +65,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   // Initialize state with server user data
   const initialState: AuthState = {
     user: serverUser || null,
-    loading: serverUser ? false : true,
+    loading: true, // Always start with loading to prevent flash
     error: null,
   };
 
   const [state, dispatch] = useReducer(authReducer, initialState);
+
+  // If we have serverUser, set loading to false after a brief moment to prevent flash
+  useEffect(() => {
+    if (serverUser) {
+      const timer = setTimeout(() => {
+        dispatch({ type: "SET_LOADING", payload: false });
+      }, 100); // Small delay to prevent flash
+      return () => clearTimeout(timer);
+    }
+  }, [serverUser]);
 
   // Escuchar cambios en la autenticación
   useEffect(() => {
@@ -92,6 +102,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
           "firebase-id-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         dispatch({ type: "SET_USER", payload: null });
       }
+
+      // Ensure loading is turned off after auth check completes
+      dispatch({ type: "SET_LOADING", payload: false });
     });
 
     return () => unsubscribe();

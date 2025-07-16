@@ -118,16 +118,42 @@ textarea::placeholder,
   width: 14px;
   height: 14px;
   border: 2px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
 }
 
 .ant-carousel .slick-dots li.slick-active button {
   background-color: white;
   border-color: white;
+  transform: scale(1.2);
 }
 
 .ant-carousel .slick-dots li:hover button {
   background-color: rgba(255, 255, 255, 0.9);
   border-color: white;
+  transform: scale(1.1);
+}
+
+/* Prevent carousel flash on load */
+.ant-carousel .slick-slide {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.ant-carousel .slick-track {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Smooth fade transitions */
+.ant-carousel.ant-carousel-fade .slick-slide {
+  transition: opacity 0.8s ease-in-out;
+}
+
+.ant-carousel.ant-carousel-fade .slick-slide.slick-active {
+  opacity: 1;
+}
+
+.ant-carousel.ant-carousel-fade .slick-slide:not(.slick-active) {
+  opacity: 0;
 }
 
 @layer utilities {

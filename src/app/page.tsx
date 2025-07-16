@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Carousel } from "antd";
 import { ProductCard, SearchBar } from "@/components";
 import { ProductCategory } from "@/types";
 import { getProductsServer } from "@/lib/api-server";
+import HeroCarousel from "@/components/ui/HeroCarousel";
 
 // This is now a Server Component that fetches real data
 const HomePage = async () => {
@@ -78,42 +78,7 @@ const HomePage = async () => {
       {/* Hero Section with Carousel Background */}
       <div className="relative h-[50vh]">
         {/* Carousel Background */}
-        <div className="absolute inset-0 z-0">
-          <Carousel
-            autoplay
-            autoplaySpeed={2000}
-            dots={true}
-            className="h-full"
-          >
-            <div className="relative h-[50vh]">
-              <Image
-                src="/esen-1.jpg"
-                alt="ESEN Campus - Image 1"
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-            </div>
-            <div className="relative h-[50vh]">
-              <Image
-                src="/esen-2.jpg"
-                alt="ESEN Campus - Image 2"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-            </div>
-            <div className="relative h-[50vh]">
-              <Image
-                src="/carlitos.jpeg"
-                alt="Carlitos Store - Image 3"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </Carousel>
-        </div>
+        <HeroCarousel />
 
         {/* Static Content Overlay */}
         <div className="relative z-10 flex items-center justify-center h-[50vh]">

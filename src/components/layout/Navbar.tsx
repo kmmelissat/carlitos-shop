@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
 
   return (
     <nav
-      className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-7xl w-[95vw] md:w-[90vw] rounded-full shadow-xl bg-white/80 backdrop-blur-lg border border-gray-200 transition-all duration-300 ${
+      className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-7xl w-[95vw] md:w-[90vw] rounded-full shadow-xl bg-white/80 backdrop-blur-lg border border-gray-200 transition-all duration-300 animate-fadeIn ${
         className || ""
       }`}
       style={{ marginLeft: "auto", marginRight: "auto" }}
@@ -105,9 +105,16 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
             </Link>
 
             {loading ? (
-              // Show loading state - just empty space or minimal loading indicator
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+              // Show loading state - preserve space to prevent layout shift
+              <div className="flex items-center gap-2">
+                {/* Placeholder for cart */}
+                <div className="relative flex items-center h-10 px-4 rounded-full opacity-50">
+                  <span className="material-icons-round text-2xl text-gray-400">
+                    shopping_cart
+                  </span>
+                </div>
+                {/* Placeholder for user menu */}
+                <div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse"></div>
               </div>
             ) : user ? (
               <>
@@ -308,10 +315,17 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
               </Link>
 
               {loading ? (
-                // Show loading state in mobile menu
-                <div className="px-3 py-2">
-                  <div className="w-full h-8 rounded bg-gray-200 animate-pulse"></div>
-                </div>
+                // Show loading state in mobile menu - preserve space to prevent layout shift
+                <>
+                  <div className="px-3 py-2 opacity-50">
+                    <div className="text-base font-medium text-gray-400">
+                      Cart
+                    </div>
+                  </div>
+                  <div className="px-3 py-2">
+                    <div className="w-24 h-6 rounded bg-gray-200 animate-pulse"></div>
+                  </div>
+                </>
               ) : user ? (
                 <>
                   {/* Remove Profile link from mobile menu */}
