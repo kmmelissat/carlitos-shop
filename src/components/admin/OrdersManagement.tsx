@@ -89,9 +89,9 @@ const OrdersManagement: React.FC<OrdersManagementProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-blue-600"
+                className="w-6 h-6 text-pink-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -191,9 +191,9 @@ const OrdersManagement: React.FC<OrdersManagementProps> = ({
 
         <div className="bg-white rounded-lg shadow-sm p-6">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
               <svg
-                className="w-6 h-6 text-green-600"
+                className="w-6 h-6 text-purple-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
