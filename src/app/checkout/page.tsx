@@ -39,7 +39,8 @@ const { TextArea } = Input;
 
 const CheckoutPage: React.FC = () => {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, total, clearCart, setProcessingOrder, isProcessingOrder } =
+    useCart();
   const { user, loading } = useAuth();
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
@@ -67,13 +68,17 @@ const CheckoutPage: React.FC = () => {
         return;
       }
 
-      if (items.length === 0) {
+      // Only redirect to cart if cart is genuinely empty and we're not processing an order
+      if (items.length === 0 && !isProcessingOrder && !submitting) {
+        console.log(
+          "DEBUG: Redirecting to cart - cart is empty and not processing"
+        );
         showToast("Your cart is empty", "info", 4000);
         router.push("/cart");
         return;
       }
     }
-  }, [user, loading, items, router]);
+  }, [user, loading, items, router, isProcessingOrder, submitting]);
 
   // Show loading while checking authentication
   if (loading) {
@@ -108,13 +113,9 @@ const CheckoutPage: React.FC = () => {
   };
 
   const handleSubmit = async (values: CheckoutFormData) => {
-    console.log("🚀 Starting order submission...");
-    console.log("📝 Form values:", values);
-    console.log("🛒 Cart items:", items);
-    console.log("👤 User:", user);
-
     if (submitting) return; // Prevent double submission
     setSubmitting(true);
+    setProcessingOrder(true); // Prevent cart operations during checkout
 
     try {
       // Ensure we have the required data even if form validation fails
@@ -141,13 +142,9 @@ const CheckoutPage: React.FC = () => {
         createdAt: new Date(),
       };
 
-      console.log("📦 Creating order with data:", order);
+      console.log("DEBUG: Creating order...");
       const orderId = await createOrder(order);
-      console.log("✅ Order created successfully with ID:", orderId);
-
-      // Clear cart first
-      clearCart();
-      console.log("🧹 Cart cleared");
+      console.log("DEBUG: Order created with ID:", orderId);
 
       // Show success message
       showToast(
@@ -156,11 +153,17 @@ const CheckoutPage: React.FC = () => {
         2000
       );
 
-      // Use router.push for smooth navigation
-      await router.push(`/orders/${orderId}/confirmation`);
+      // Navigate first - keep cart intact during navigation
+      console.log("DEBUG: Navigating to confirmation page...");
+      router.push(`/orders/${orderId}/confirmation`);
+
+      // Note: Cart will be cleared in the confirmation page after successful load
     } catch (error) {
-      console.error("❌ Error placing order:", error);
+      console.error("Error placing order:", error);
       showToast("Failed to place order. Please try again.", "error", 4000);
+      setProcessingOrder(false); // Re-enable cart operations on error
+    } finally {
+      // Always reset submitting state
       setSubmitting(false);
     }
   };

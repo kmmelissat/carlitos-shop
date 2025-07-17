@@ -12,12 +12,13 @@ import { CartItem, Product } from "@/types";
 // Tipos para actions
 type CartAction =
   | { type: "ADD_ITEM"; payload: { product: Product; quantity: number } }
-  | { type: "REMOVE_ITEM"; payload: string } // productId
   | {
       type: "UPDATE_QUANTITY";
       payload: { productId: string; quantity: number };
     }
+  | { type: "REMOVE_ITEM"; payload: string }
   | { type: "CLEAR_CART" }
+  | { type: "SET_PROCESSING_ORDER"; payload: boolean }
   | { type: "LOAD_CART"; payload: CartItem[] };
 
 // Estado del carrito
@@ -25,6 +26,7 @@ interface CartState {
   items: CartItem[];
   total: number;
   itemCount: number;
+  isProcessingOrder: boolean;
 }
 
 // Estado inicial
@@ -32,6 +34,7 @@ const initialState: CartState = {
   items: [],
   total: 0,
   itemCount: 0,
+  isProcessingOrder: false,
 };
 
 // Función para calcular totales
@@ -47,17 +50,18 @@ const calculateTotals = (
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case "ADD_ITEM": {
+      // Prevent adding items while processing order
+      if (state.isProcessingOrder) return state;
+
       const { product, quantity } = action.payload;
-      const existingItem = state.items.find(
+      const existingItemIndex = state.items.findIndex(
         (item) => item.product.id === product.id
       );
 
       let newItems: CartItem[];
-
-      if (existingItem) {
-        // Actualizar cantidad del producto existente
-        newItems = state.items.map((item) =>
-          item.product.id === product.id
+      if (existingItemIndex >= 0) {
+        newItems = state.items.map((item, index) =>
+          index === existingItemIndex
             ? {
                 ...item,
                 quantity: item.quantity + quantity,
@@ -66,84 +70,107 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
             : item
         );
       } else {
-        // Agregar nuevo producto
-        const newItem: CartItem = {
-          product,
-          quantity,
-          totalPrice: product.price * quantity,
-        };
-        newItems = [...state.items, newItem];
+        newItems = [
+          ...state.items,
+          {
+            product,
+            quantity,
+            totalPrice: quantity * product.price,
+          },
+        ];
       }
 
-      const { total, itemCount } = calculateTotals(newItems);
-
-      return {
-        items: newItems,
-        total,
-        itemCount,
-      };
-    }
-
-    case "REMOVE_ITEM": {
-      const newItems = state.items.filter(
-        (item) => item.product.id !== action.payload
+      const newTotal = newItems.reduce((sum, item) => sum + item.totalPrice, 0);
+      const newItemCount = newItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0
       );
-      const { total, itemCount } = calculateTotals(newItems);
 
       return {
+        ...state,
         items: newItems,
-        total,
-        itemCount,
+        total: newTotal,
+        itemCount: newItemCount,
       };
     }
 
     case "UPDATE_QUANTITY": {
+      // Prevent updating items while processing order
+      if (state.isProcessingOrder) return state;
+
       const { productId, quantity } = action.payload;
-
-      if (quantity <= 0) {
-        // Si la cantidad es 0 o negativa, eliminar el producto
-        const newItems = state.items.filter(
-          (item) => item.product.id !== productId
-        );
-        const { total, itemCount } = calculateTotals(newItems);
-
-        return {
-          items: newItems,
-          total,
-          itemCount,
-        };
-      }
-
       const newItems = state.items.map((item) =>
         item.product.id === productId
           ? {
               ...item,
               quantity,
-              totalPrice: item.product.price * quantity,
+              totalPrice: quantity * item.product.price,
             }
           : item
       );
 
-      const { total, itemCount } = calculateTotals(newItems);
+      const newTotal = newItems.reduce((sum, item) => sum + item.totalPrice, 0);
+      const newItemCount = newItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
 
       return {
+        ...state,
         items: newItems,
-        total,
-        itemCount,
+        total: newTotal,
+        itemCount: newItemCount,
+      };
+    }
+
+    case "REMOVE_ITEM": {
+      // Prevent removing items while processing order
+      if (state.isProcessingOrder) return state;
+
+      const productId = action.payload;
+      const newItems = state.items.filter(
+        (item) => item.product.id !== productId
+      );
+
+      const newTotal = newItems.reduce((sum, item) => sum + item.totalPrice, 0);
+      const newItemCount = newItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
+
+      return {
+        ...state,
+        items: newItems,
+        total: newTotal,
+        itemCount: newItemCount,
       };
     }
 
     case "CLEAR_CART":
-      return initialState;
-
-    case "LOAD_CART": {
-      const { total, itemCount } = calculateTotals(action.payload);
       return {
-        items: action.payload,
-        total,
-        itemCount,
+        ...state,
+        items: [],
+        total: 0,
+        itemCount: 0,
+        isProcessingOrder: false, // Reset processing state when clearing
       };
-    }
+
+    case "SET_PROCESSING_ORDER":
+      return {
+        ...state,
+        isProcessingOrder: action.payload,
+      };
+
+    case "LOAD_CART":
+      // Don't load cart if we're processing an order
+      if (state.isProcessingOrder) return state;
+
+      return {
+        ...state,
+        items: action.payload,
+        total: action.payload.reduce((sum, item) => sum + item.totalPrice, 0),
+        itemCount: action.payload.reduce((sum, item) => sum + item.quantity, 0),
+      };
 
     default:
       return state;
@@ -151,11 +178,16 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 };
 
 // Context
-interface CartContextType extends CartState {
-  addItem: (product: Product, quantity: number) => void;
+interface CartContextType {
+  items: CartItem[];
+  total: number;
+  itemCount: number;
+  isProcessingOrder: boolean;
+  addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  setProcessingOrder: (processing: boolean) => void;
   isInCart: (productId: string) => boolean;
   getItemQuantity: (productId: string) => number;
 }
@@ -185,7 +217,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   // Guardar carrito en localStorage cuando cambie
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(state.items));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cart", JSON.stringify(state.items));
+    }
   }, [state.items]);
 
   // Funciones del carrito
@@ -203,6 +237,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const clearCart = (): void => {
     dispatch({ type: "CLEAR_CART" });
+    // localStorage will be updated automatically by the useEffect
+  };
+
+  const setProcessingOrder = (processing: boolean): void => {
+    dispatch({ type: "SET_PROCESSING_ORDER", payload: processing });
   };
 
   const isInCart = (productId: string): boolean => {
@@ -214,17 +253,20 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     return item ? item.quantity : 0;
   };
 
-  const value: CartContextType = {
+  const contextValue: CartContextType = {
     ...state,
     addItem,
     removeItem,
     updateQuantity,
     clearCart,
+    setProcessingOrder,
     isInCart,
     getItemQuantity,
   };
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>
+  );
 };
 
 // Hook personalizado

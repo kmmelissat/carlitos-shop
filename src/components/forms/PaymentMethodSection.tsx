@@ -49,7 +49,7 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
     setSelectedPayment(type);
     form.setFieldsValue({ paymentMethod: { type } });
 
-    // Clear card details when switching away from card payment
+    // Clear payment details when switching payment methods
     if (type !== PaymentMethodType.CARD) {
       form.setFieldsValue({
         paymentMethod: {
@@ -59,6 +59,17 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
             cardHolder: undefined,
             expiryDate: undefined,
             cvv: undefined,
+          },
+        },
+      });
+    }
+
+    if (type !== PaymentMethodType.TRANSFER) {
+      form.setFieldsValue({
+        paymentMethod: {
+          type,
+          details: {
+            transferReference: undefined,
           },
         },
       });
@@ -264,7 +275,7 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
                 Bank Transfer Details
               </div>
               <div
-                className="grid grid-cols-2 gap-2 text-base"
+                className="grid grid-cols-2 gap-2 text-base mb-6"
                 style={{ fontFamily: "Mona Sans" }}
               >
                 <div className="text-gray-700">Bank Name:</div>
@@ -283,6 +294,35 @@ const PaymentMethodSection: React.FC<PaymentMethodSectionProps> = ({
                 <div className="text-right text-gray-900 font-semibold">
                   Carlitos Snacks Ltd.
                 </div>
+              </div>
+
+              {/* Transfer Reference Input */}
+              <div className="border-t border-purple-200 pt-4">
+                <Form.Item
+                  name={["paymentMethod", "details", "transferReference"]}
+                  label={
+                    <span className="font-semibold text-gray-900">
+                      Transfer Reference ID
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: selectedPayment === PaymentMethodType.TRANSFER,
+                      message: "Please enter your transfer reference ID",
+                    },
+                  ]}
+                  className="mb-0"
+                >
+                  <Input
+                    placeholder="Enter your transfer reference number"
+                    className="h-12 text-base placeholder-gray-400"
+                    style={{ fontFamily: "Mona Sans" }}
+                  />
+                </Form.Item>
+                <p className="text-sm text-purple-600 mt-2">
+                  Please provide the reference ID from your bank transfer for
+                  verification.
+                </p>
               </div>
             </div>
           </div>

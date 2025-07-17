@@ -111,40 +111,39 @@ function removeUndefined(obj: any): any {
 
 // Crear orden
 export const createOrder = async (orderData: any): Promise<string> => {
+  // Validate required fields
+  if (!orderData.userId) {
+    throw new Error("User ID is required for order creation");
+  }
+
+  if (!orderData.items || orderData.items.length === 0) {
+    throw new Error("Order must contain at least one item");
+  }
+
+  if (!orderData.total || orderData.total <= 0) {
+    throw new Error("Order total must be greater than 0");
+  }
+
+  // Remove undefined values to avoid Firestore errors
+  const cleanOrderData = removeUndefined(orderData);
+
   try {
-    console.log("🔄 Starting order creation...");
-    console.log("📝 Original order data:", orderData);
+    const docRef = await addDoc(collection(db, "orders"), cleanOrderData);
 
-    const cleanOrder = removeUndefined(orderData);
-    console.log("🧹 Cleaned order data:", cleanOrder);
+    // Verify the order was created by reading it back
+    const verificationDoc = await getDoc(doc(db, "orders", docRef.id));
 
-    // Ensure required fields are present
-    if (!cleanOrder.userId || !cleanOrder.items || !cleanOrder.total) {
-      throw new Error("Missing required order fields");
+    if (!verificationDoc.exists()) {
+      throw new Error("Order was created but verification failed");
     }
 
-    // Add timestamps
-    const orderWithTimestamps = {
-      ...cleanOrder,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    console.log("⏰ Order with timestamps:", orderWithTimestamps);
-
-    const docRef = await addDoc(collection(db, "orders"), orderWithTimestamps);
-    console.log("✅ Order created with ID:", docRef.id);
-
-    // Verify the order was created
-    const orderDoc = await getDoc(docRef);
-    if (!orderDoc.exists()) {
-      throw new Error("Order was not created properly");
-    }
-
-    console.log("✨ Order verified in database");
     return docRef.id;
-  } catch (error: any) {
-    console.error("❌ Error creating order:", error);
-    throw new Error(error.message || "Error al crear la orden");
+  } catch (error) {
+    console.error("Error creating order:", error);
+    throw new Error(
+      `Failed to create order: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
   }
 };

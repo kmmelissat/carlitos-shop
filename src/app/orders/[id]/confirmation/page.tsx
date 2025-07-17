@@ -6,11 +6,12 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { format } from "date-fns";
 import { Button, Card } from "antd";
+import { useCart } from "@/store";
 
 const OrderConfirmationPage = () => {
   const router = useRouter();
   const params = useParams();
-  console.log("🔍 Confirmation page params:", params);
+  const { clearCart, setProcessingOrder } = useCart();
 
   const id =
     typeof params.id === "string"
@@ -18,33 +19,45 @@ const OrderConfirmationPage = () => {
       : Array.isArray(params.id)
       ? params.id[0]
       : "";
-  console.log("📄 Order ID:", id);
 
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [cartCleared, setCartCleared] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      console.log("🔄 Starting to fetch order data...");
       if (!id) {
-        console.error("❌ Invalid order ID");
         setError("Invalid order ID");
         setLoading(false);
         return;
       }
 
       try {
-        console.log("📥 Fetching order document from Firestore...");
-        const orderDoc = await getDoc(doc(db, "orders", id));
+        // Retry logic for potential timing issues with Firestore
+        let attempts = 0;
+        const maxAttempts = 3;
+        let orderDoc;
 
-        if (orderDoc.exists()) {
+        while (attempts < maxAttempts) {
+          orderDoc = await getDoc(doc(db, "orders", id));
+
+          if (orderDoc.exists()) {
+            break;
+          }
+
+          attempts++;
+          if (attempts < maxAttempts) {
+            // Wait 1 second before retrying
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        }
+
+        if (orderDoc && orderDoc.exists()) {
           const data = orderDoc.data();
-          console.log("✅ Order data retrieved:", data);
 
           // Ensure createdAt is properly handled
           const createdAt = data.createdAt?.toDate?.() || new Date();
-          console.log("📅 Formatted createdAt:", createdAt);
 
           setOrder({
             id: orderDoc.id,
@@ -52,20 +65,33 @@ const OrderConfirmationPage = () => {
             createdAt,
           });
         } else {
-          console.error("❌ Order document not found");
-          setError("Order not found");
+          setError(
+            "Order not found. If you just placed this order, please wait a moment and refresh the page."
+          );
         }
       } catch (error) {
-        console.error("❌ Error fetching order:", error);
-        setError("Failed to load order details");
+        setError(
+          "Failed to load order details. Please try refreshing the page."
+        );
       } finally {
-        console.log("🏁 Finished fetching order");
         setLoading(false);
       }
     };
 
     fetchOrder();
   }, [id]);
+
+  // Clear cart when order is successfully loaded
+  useEffect(() => {
+    if (order && !cartCleared) {
+      console.log(
+        "DEBUG: Order confirmation loaded, clearing cart and resetting processing state"
+      );
+      clearCart();
+      setProcessingOrder(false);
+      setCartCleared(true);
+    }
+  }, [order, cartCleared, clearCart, setProcessingOrder]);
 
   if (loading) {
     return (
@@ -81,7 +107,7 @@ const OrderConfirmationPage = () => {
   if (error || !order) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-20">
-        <div className="text-center">
+        <div className="text-center max-w-md mx-auto px-4">
           <span className="material-icons-round text-red-500 text-6xl mb-4">
             error_outline
           </span>
@@ -89,21 +115,34 @@ const OrderConfirmationPage = () => {
             {error || "Order Not Found"}
           </h1>
           <p className="text-gray-600 mb-6">
-            We couldn't find the order you're looking for.
+            {error?.includes("not found")
+              ? "We couldn't find the order you're looking for. If you just placed this order, it might still be processing."
+              : "We couldn't load the order details."}
           </p>
-          <div className="space-x-4">
+          <div className="space-y-3">
+            <button
+              onClick={() => {
+                setError(null);
+                setLoading(true);
+                // Trigger re-fetch by changing the dependency
+                window.location.reload();
+              }}
+              className="w-full px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
+            >
+              Try Again
+            </button>
+            <Link
+              href="/orders"
+              className="block w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              View All Orders
+            </Link>
             <Link
               href="/products"
-              className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors"
+              className="block w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
             >
               Continue Shopping
             </Link>
-            <button
-              onClick={() => router.back()}
-              className="inline-block px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-            >
-              Go Back
-            </button>
           </div>
         </div>
       </div>
@@ -298,20 +337,45 @@ const OrderConfirmationPage = () => {
                   <span className="material-icons-round text-2xl text-pink-600">
                     {order.paymentMethod.type === "cash_on_delivery"
                       ? "payments"
-                      : "account_balance"}
+                      : order.paymentMethod.type === "transfer"
+                      ? "account_balance"
+                      : order.paymentMethod.type === "card"
+                      ? "credit_card"
+                      : "payment"}
                   </span>
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900 mb-1">
                     {order.paymentMethod.type === "cash_on_delivery"
                       ? "Cash on Delivery"
-                      : "Bank Transfer"}
+                      : order.paymentMethod.type === "transfer"
+                      ? "Bank Transfer"
+                      : order.paymentMethod.type === "card"
+                      ? "Credit/Debit Card"
+                      : "Other"}
                   </p>
                   <p className="text-gray-600 text-sm">
                     {order.paymentMethod.type === "cash_on_delivery"
                       ? "Pay with cash when your order arrives"
-                      : "Payment will be processed through bank transfer"}
+                      : order.paymentMethod.type === "transfer"
+                      ? "Payment will be processed through bank transfer"
+                      : order.paymentMethod.type === "card"
+                      ? "Payment processed securely via card"
+                      : "Payment method selected"}
                   </p>
+
+                  {/* Show transfer reference if available */}
+                  {order.paymentMethod.type === "transfer" &&
+                    order.paymentMethod.details?.transferReference && (
+                      <div className="mt-3 p-3 bg-white rounded-lg border border-purple-200">
+                        <p className="text-sm font-medium text-gray-900 mb-1">
+                          Transfer Reference ID:
+                        </p>
+                        <p className="text-sm font-mono text-purple-700 bg-purple-50 px-2 py-1 rounded">
+                          {order.paymentMethod.details.transferReference}
+                        </p>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
