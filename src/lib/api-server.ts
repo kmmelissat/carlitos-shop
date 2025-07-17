@@ -144,16 +144,46 @@ export const getOrdersServer = async () => {
     const orders: any[] = [];
     ordersSnapshot.forEach((doc) => {
       const data = doc.data();
+
       // Convert all nested Firestore Timestamps to Date objects
       const cleanData = convertTimestampsToDate(data);
+
+      // More careful date handling - preserve original date if available
+      let orderDate;
+      if (data.createdAt) {
+        // Try to convert the original date
+        const convertedDate = safeToDate(data.createdAt);
+        if (convertedDate) {
+          orderDate = convertedDate;
+        } else {
+          // If conversion fails, try with the cleaned data
+          const cleanedDate = safeToDate(cleanData.createdAt);
+          if (cleanedDate) {
+            orderDate = cleanedDate;
+          } else {
+            // Last resort: use a very old date to indicate data issue instead of current date
+            console.warn(
+              `Order ${doc.id} has invalid createdAt, using placeholder date`
+            );
+            orderDate = new Date("2024-01-01"); // Placeholder date to make the issue visible
+          }
+        }
+      } else {
+        console.warn(`Order ${doc.id} missing createdAt field entirely`);
+        orderDate = new Date("2024-01-01"); // Placeholder date
+      }
+
       orders.push({
         id: doc.id,
         ...cleanData,
-        // Ensure top-level dates are properly set
-        createdAt: safeToDate(cleanData.createdAt) || new Date(),
-        updatedAt: safeToDate(cleanData.updatedAt) || new Date(),
+        // Use the carefully processed date
+        createdAt: orderDate,
+        updatedAt: safeToDate(cleanData.updatedAt) || orderDate, // Use creation date as fallback
       });
     });
+
+    // Sort by date again to ensure proper ordering even with placeholder dates
+    orders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     return orders;
   } catch (error) {
@@ -202,15 +232,45 @@ export const getRecentOrdersServer = async () => {
     const orders: any[] = [];
     ordersSnapshot.forEach((doc) => {
       const data = doc.data();
+
       // Convert all nested Firestore Timestamps to Date objects
       const cleanData = convertTimestampsToDate(data);
+
+      // More careful date handling - preserve original date if available
+      let orderDate;
+      if (data.createdAt) {
+        // Try to convert the original date
+        const convertedDate = safeToDate(data.createdAt);
+        if (convertedDate) {
+          orderDate = convertedDate;
+        } else {
+          // If conversion fails, try with the cleaned data
+          const cleanedDate = safeToDate(cleanData.createdAt);
+          if (cleanedDate) {
+            orderDate = cleanedDate;
+          } else {
+            // Last resort: use a very old date to indicate data issue instead of current date
+            console.warn(
+              `Order ${doc.id} has invalid createdAt, using placeholder date`
+            );
+            orderDate = new Date("2024-01-01"); // Placeholder date to make the issue visible
+          }
+        }
+      } else {
+        console.warn(`Order ${doc.id} missing createdAt field entirely`);
+        orderDate = new Date("2024-01-01"); // Placeholder date
+      }
+
       orders.push({
         id: doc.id,
         ...cleanData,
-        // Ensure top-level dates are properly set
-        createdAt: safeToDate(cleanData.createdAt) || new Date(),
+        // Use the carefully processed date
+        createdAt: orderDate,
       });
     });
+
+    // Sort by date again to ensure proper ordering even with placeholder dates
+    orders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     return orders;
   } catch (error) {
