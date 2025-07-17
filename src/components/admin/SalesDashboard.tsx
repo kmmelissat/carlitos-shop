@@ -187,22 +187,6 @@ const SalesDashboard: React.FC<SalesDashboardProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <span className="material-icons-round text-5xl text-orange-600 mr-4 animate-pulse">
-              analytics
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent">
-              Sales Analytics Dashboard
-            </h1>
-          </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive insights into your store's performance and sales
-            trends
-          </p>
-        </div>
-
         {/* Weekly Comparison Cards */}
         <Row gutter={[16, 16]} className="mb-8">
           <Col xs={24} sm={12} lg={6}>
