@@ -301,3 +301,202 @@ export const updateOrderStatusServer = async (
     throw new Error("Failed to update order status");
   }
 };
+
+// Analytics functions for Sales Dashboard
+
+// Get daily revenue trends for the last 30 days
+export const getRevenueTrendsServer = async () => {
+  try {
+    const orders = await getOrdersServer();
+    const completedOrders = orders.filter(
+      (o) => o.status?.status === "completed"
+    );
+
+    // Get last 30 days
+    const last30Days = Array.from({ length: 30 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (29 - i));
+      return {
+        date: date.toISOString().split("T")[0], // YYYY-MM-DD format
+        revenue: 0,
+        orders: 0,
+      };
+    });
+
+    // Calculate revenue for each day
+    completedOrders.forEach((order) => {
+      const orderDate = new Date(order.createdAt).toISOString().split("T")[0];
+      const dayData = last30Days.find((day) => day.date === orderDate);
+      if (dayData) {
+        dayData.revenue += order.total || 0;
+        dayData.orders += 1;
+      }
+    });
+
+    return last30Days.map((day) => ({
+      ...day,
+      formattedDate: new Date(day.date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+    }));
+  } catch (error) {
+    console.error("Error calculating revenue trends:", error);
+    return [];
+  }
+};
+
+// Get best-selling products
+export const getBestSellingProductsServer = async () => {
+  try {
+    const orders = await getOrdersServer();
+    const completedOrders = orders.filter(
+      (o) => o.status?.status === "completed"
+    );
+
+    // Count product sales
+    const productSales: Record<
+      string,
+      { name: string; sales: number; revenue: number }
+    > = {};
+
+    completedOrders.forEach((order) => {
+      if (order.items) {
+        order.items.forEach((item: any) => {
+          // Handle different item structures
+          const productId = item.product?.id || item.productId || item.id;
+          const productName =
+            item.product?.name || item.name || "Unknown Product";
+          const quantity = item.quantity || 1;
+          const price = item.product?.price || item.price || 0;
+
+          if (!productId) return; // Skip items without a valid product ID
+
+          if (!productSales[productId]) {
+            productSales[productId] = {
+              name: productName,
+              sales: 0,
+              revenue: 0,
+            };
+          }
+
+          productSales[productId].sales += quantity;
+          productSales[productId].revenue += price * quantity;
+        });
+      }
+    });
+
+    // Convert to array and sort by sales
+    const sortedProducts = Object.entries(productSales)
+      .map(([id, data]) => ({
+        productId: id,
+        ...data,
+      }))
+      .sort((a, b) => b.sales - a.sales)
+      .slice(0, 10); // Top 10 products
+
+    return sortedProducts;
+  } catch (error) {
+    console.error("Error calculating best-selling products:", error);
+    return [];
+  }
+};
+
+// Get peak sales hours
+export const getPeakSalesHoursServer = async () => {
+  try {
+    const orders = await getOrdersServer();
+    const completedOrders = orders.filter(
+      (o) => o.status?.status === "completed"
+    );
+
+    // Initialize hours array (0-23)
+    const hourlyData = Array.from({ length: 24 }, (_, hour) => ({
+      hour,
+      formattedHour: `${hour.toString().padStart(2, "0")}:00`,
+      orders: 0,
+      revenue: 0,
+    }));
+
+    // Count orders by hour
+    completedOrders.forEach((order) => {
+      const orderHour = new Date(order.createdAt).getHours();
+      hourlyData[orderHour].orders += 1;
+      hourlyData[orderHour].revenue += order.total || 0;
+    });
+
+    return hourlyData;
+  } catch (error) {
+    console.error("Error calculating peak sales hours:", error);
+    return [];
+  }
+};
+
+// Get weekly revenue comparison (this week vs last week)
+export const getWeeklyComparisonServer = async () => {
+  try {
+    const orders = await getOrdersServer();
+    const completedOrders = orders.filter(
+      (o) => o.status?.status === "completed"
+    );
+
+    const now = new Date();
+    const thisWeekStart = new Date(now);
+    thisWeekStart.setDate(now.getDate() - now.getDay()); // Start of this week
+    thisWeekStart.setHours(0, 0, 0, 0);
+
+    const lastWeekStart = new Date(thisWeekStart);
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(thisWeekStart);
+    lastWeekEnd.setTime(lastWeekEnd.getTime() - 1);
+
+    let thisWeekRevenue = 0;
+    let thisWeekOrders = 0;
+    let lastWeekRevenue = 0;
+    let lastWeekOrders = 0;
+
+    completedOrders.forEach((order) => {
+      const orderDate = new Date(order.createdAt);
+
+      if (orderDate >= thisWeekStart) {
+        thisWeekRevenue += order.total || 0;
+        thisWeekOrders += 1;
+      } else if (orderDate >= lastWeekStart && orderDate <= lastWeekEnd) {
+        lastWeekRevenue += order.total || 0;
+        lastWeekOrders += 1;
+      }
+    });
+
+    const revenueChange =
+      lastWeekRevenue === 0
+        ? 100
+        : ((thisWeekRevenue - lastWeekRevenue) / lastWeekRevenue) * 100;
+
+    const ordersChange =
+      lastWeekOrders === 0
+        ? 100
+        : ((thisWeekOrders - lastWeekOrders) / lastWeekOrders) * 100;
+
+    return {
+      thisWeek: {
+        revenue: thisWeekRevenue,
+        orders: thisWeekOrders,
+      },
+      lastWeek: {
+        revenue: lastWeekRevenue,
+        orders: lastWeekOrders,
+      },
+      changes: {
+        revenue: Math.round(revenueChange * 100) / 100,
+        orders: Math.round(ordersChange * 100) / 100,
+      },
+    };
+  } catch (error) {
+    console.error("Error calculating weekly comparison:", error);
+    return {
+      thisWeek: { revenue: 0, orders: 0 },
+      lastWeek: { revenue: 0, orders: 0 },
+      changes: { revenue: 0, orders: 0 },
+    };
+  }
+};

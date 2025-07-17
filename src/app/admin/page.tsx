@@ -64,6 +64,12 @@ const AdminDashboard = async () => {
               </div>
               <div className="flex items-center space-x-4">
                 <Link
+                  href="/admin/analytics"
+                  className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  📊 Analytics
+                </Link>
+                <Link
                   href="/admin/products"
                   className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
                 >

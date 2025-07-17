@@ -32,6 +32,12 @@ const AdminOrdersPage = async () => {
             </div>
             <div className="flex items-center space-x-4">
               <Link
+                href="/admin/analytics"
+                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                📊 Analytics
+              </Link>
+              <Link
                 href="/admin"
                 className="text-orange-600 hover:text-orange-700"
               >
