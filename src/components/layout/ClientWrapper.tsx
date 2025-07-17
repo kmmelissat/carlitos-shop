@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { AuthProvider, CartProvider } from "@/store";
+import { useAuthStore } from "@/store";
 import { AuthUser } from "@/types";
 import { Navbar, Footer } from "@/components";
 
@@ -17,19 +17,19 @@ const ClientWrapper: React.FC<ClientWrapperProps> = ({
 }) => {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  // Initialize auth store with server user data
+  useEffect(() => {
+    initializeAuth(serverUser);
+  }, [initializeAuth, serverUser]);
 
   return (
-    <AuthProvider serverUser={serverUser}>
-      <CartProvider>
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Navbar />
-          <main className={`flex-1 ${isHomePage ? "" : "pt-32"}`}>
-            {children}
-          </main>
-          <Footer />
-        </div>
-      </CartProvider>
-    </AuthProvider>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+      <main className={`flex-1 ${isHomePage ? "" : "pt-32"}`}>{children}</main>
+      <Footer />
+    </div>
   );
 };
 

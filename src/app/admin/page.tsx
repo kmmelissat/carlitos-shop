@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import { UserRole } from "@/types";
 
 const AdminDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const [stats] = useState({
     totalProducts: 25,
     activeProducts: 22,

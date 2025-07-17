@@ -21,7 +21,7 @@ import {
   ClockCircleOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
-import { useCart, useAuth } from "@/store";
+import { useCartStore, useAuthStore } from "@/store";
 import { showToast } from "@/components/ui/Toast";
 import {
   PaymentMethodType,
@@ -40,8 +40,8 @@ const { TextArea } = Input;
 const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const { items, total, clearCart, setProcessingOrder, isProcessingOrder } =
-    useCart();
-  const { user, loading } = useAuth();
+    useCartStore();
+  const { user, loading } = useAuthStore();
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(
@@ -69,16 +69,13 @@ const CheckoutPage: React.FC = () => {
       }
 
       // Only redirect to cart if cart is genuinely empty and we're not processing an order
-      if (items.length === 0 && !isProcessingOrder && !submitting) {
-        console.log(
-          "DEBUG: Redirecting to cart - cart is empty and not processing"
-        );
+      if (items.length === 0 && !isProcessingOrder) {
         showToast("Your cart is empty", "info", 4000);
         router.push("/cart");
         return;
       }
     }
-  }, [user, loading, items, router, isProcessingOrder, submitting]);
+  }, [user, loading, items, router, isProcessingOrder]);
 
   // Show loading while checking authentication
   if (loading) {
@@ -142,9 +139,7 @@ const CheckoutPage: React.FC = () => {
         createdAt: new Date(),
       };
 
-      console.log("DEBUG: Creating order...");
       const orderId = await createOrder(order);
-      console.log("DEBUG: Order created with ID:", orderId);
 
       // Show success message
       showToast(
@@ -153,11 +148,8 @@ const CheckoutPage: React.FC = () => {
         2000
       );
 
-      // Navigate first - keep cart intact during navigation
-      console.log("DEBUG: Navigating to confirmation page...");
+      // Navigate using Next.js router - cart will be cleared in confirmation page
       router.push(`/orders/${orderId}/confirmation`);
-
-      // Note: Cart will be cleared in the confirmation page after successful load
     } catch (error) {
       console.error("Error placing order:", error);
       showToast("Failed to place order. Please try again.", "error", 4000);

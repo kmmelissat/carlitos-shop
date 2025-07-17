@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ProductFormData, ProductCategory } from "@/types";
 import { createProduct, updateProduct } from "@/lib/api";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 
 interface ProductFormProps {
   initialData?: Partial<ProductFormData>;
@@ -17,7 +17,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   productId,
   isEdit = false,
 }) => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

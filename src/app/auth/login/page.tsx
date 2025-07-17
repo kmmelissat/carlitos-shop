@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import { LoginFormData } from "@/types";
 import Image from "next/image";
 
 const LoginPage: React.FC = () => {
-  const { login, loginWithGoogle, loading, error, user } = useAuth();
+  const { login, loginWithGoogle, loading, error, user } = useAuthStore();
   const router = useRouter();
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",

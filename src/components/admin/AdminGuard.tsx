@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import { UserRole } from "@/types";
 
 interface AdminGuardProps {
@@ -10,7 +10,7 @@ interface AdminGuardProps {
 }
 
 const AdminGuard: React.FC<AdminGuardProps> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuthStore();
 
   // Show loading while authentication state is being determined
   if (loading) {

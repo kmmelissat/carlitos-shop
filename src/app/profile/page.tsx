@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import OrdersSection from "./OrdersSection";
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   if (!user) {
     return (

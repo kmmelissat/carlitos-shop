@@ -1,7 +1,9 @@
-// Auth Context
-export { AuthProvider, useAuth } from "./AuthContext";
-export type { AuthState, AuthUser } from "@/types";
+// Zustand Auth Store
+export { useAuthStore, cleanupAuthStore } from "./authStore";
 
-// Cart Context
-export { CartProvider, useCart } from "./CartContext";
+// Zustand Cart Store
+export { useCartStore } from "./cartStore";
+
+// Types
+export type { AuthUser } from "@/types";
 export type { CartItem } from "@/types";

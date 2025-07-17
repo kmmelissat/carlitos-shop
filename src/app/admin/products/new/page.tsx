@@ -2,12 +2,12 @@
 
 import React from "react";
 import Link from "next/link";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import { UserRole } from "@/types";
 import ProductForm from "@/components/forms/ProductForm";
 
 const NewProductPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   // Check admin access
   if (!user || user.role !== UserRole.ADMIN) {

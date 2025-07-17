@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import { RegisterFormData } from "@/types";
 import Image from "next/image";
 
 const RegisterPage: React.FC = () => {
-  const { register, loginWithGoogle, loading, error, user } = useAuth();
+  const { register, loginWithGoogle, loading, error, user } = useAuthStore();
   const router = useRouter();
   const [formData, setFormData] = useState<RegisterFormData>({
     name: "",

@@ -9,14 +9,14 @@ import {
   ShoppingOutlined,
   ArrowLeftOutlined,
 } from "@ant-design/icons";
-import { useCart, useAuth } from "@/store";
+import { useCartStore, useAuthStore } from "@/store";
 import { showToast } from "@/components/ui/Toast";
 
 const CartPage: React.FC = () => {
   const router = useRouter();
   const { items, total, itemCount, updateQuantity, removeItem, clearCart } =
-    useCart();
-  const { user, loading } = useAuth();
+    useCartStore();
+  const { user, loading } = useAuthStore();
 
   // Redirect to login if not authenticated
   useEffect(() => {

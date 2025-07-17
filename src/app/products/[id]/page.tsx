@@ -9,7 +9,7 @@ import {
   HeartOutlined,
   ShareAltOutlined,
 } from "@ant-design/icons";
-import { useCart, useAuth } from "@/store";
+import { useCartStore, useAuthStore } from "@/store";
 import { Product } from "@/types";
 import { getProductById } from "@/lib/api";
 import { showToast } from "@/components/ui/Toast";
@@ -24,8 +24,8 @@ const ProductDetailPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const { addItem, isInCart, getItemQuantity } = useCart();
-  const { user } = useAuth();
+  const { addItem, isInCart, getItemQuantity } = useCartStore();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const fetchProduct = async () => {

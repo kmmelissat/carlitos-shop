@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import { useRouter } from "next/navigation";
 import { OrdersSection } from "@/components";
 import Link from "next/link";
 
 const OrdersPage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuthStore();
   const router = useRouter();
 
   // Show loading state

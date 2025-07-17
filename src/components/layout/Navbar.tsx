@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useAuth, useCart } from "@/store";
+import { useAuthStore, useCartStore } from "@/store";
 import { UserRole, AuthUser } from "@/types";
 
 interface NavbarProps {
@@ -12,8 +12,8 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ className }) => {
-  const { user, loading, logout } = useAuth();
-  const { itemCount } = useCart();
+  const { user, loading, logout } = useAuthStore();
+  const { itemCount } = useCartStore();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);

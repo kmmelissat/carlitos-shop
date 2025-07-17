@@ -6,12 +6,12 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { format } from "date-fns";
 import { Button, Card } from "antd";
-import { useCart } from "@/store";
+import { useCartStore } from "@/store";
 
 const OrderConfirmationPage = () => {
   const router = useRouter();
   const params = useParams();
-  const { clearCart, setProcessingOrder } = useCart();
+  const { clearCart, setProcessingOrder } = useCartStore();
 
   const id =
     typeof params.id === "string"
@@ -84,9 +84,6 @@ const OrderConfirmationPage = () => {
   // Clear cart when order is successfully loaded
   useEffect(() => {
     if (order && !cartCleared) {
-      console.log(
-        "DEBUG: Order confirmation loaded, clearing cart and resetting processing state"
-      );
       clearCart();
       setProcessingOrder(false);
       setCartCleared(true);

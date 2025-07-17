@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Product } from "@/types";
-import { useCart, useAuth } from "@/store";
+import { useCartStore, useAuthStore } from "@/store";
 import { showToast } from "@/components/ui/Toast";
 
 interface ProductCardProps {
@@ -20,8 +20,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   showAddToCart = true, // Default to true to maintain existing behavior
   isFeatured = false, // Default to false
 }) => {
-  const { addItem, isInCart, getItemQuantity } = useCart();
-  const { user } = useAuth();
+  const { addItem, isInCart, getItemQuantity } = useCartStore();
+  const { user } = useAuthStore();
   const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
 
@@ -148,7 +148,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {/* Mobile-Optimized Featured Badge */}
             {product.featured && (
               <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white px-2 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-xl flex items-center animate-pulse animate-glow">
-                <span className="material-icons-round text-sm md:text-lg mr-1 md:mr-2">star</span>
+                <span className="material-icons-round text-sm md:text-lg mr-1 md:mr-2">
+                  star
+                </span>
                 <span className="hidden sm:inline">Featured</span>
                 <span className="sm:hidden">★</span>
                 <div className="ml-1 md:ml-2 w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full animate-ping"></div>
@@ -289,7 +291,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       <span className="material-icons-round text-base md:text-xl mr-1 md:mr-2">
                         login
                       </span>
-                      <span className="hidden sm:inline">Sign In to Add to Cart</span>
+                      <span className="hidden sm:inline">
+                        Sign In to Add to Cart
+                      </span>
                       <span className="sm:hidden">Sign In</span>
                     </span>
                   ) : isAdding ? (
@@ -302,7 +306,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
                       <span className="material-icons-round text-base md:text-xl mr-1 md:mr-2">
                         check_circle
                       </span>
-                      <span className="hidden sm:inline">In Cart ({cartQuantity})</span>
+                      <span className="hidden sm:inline">
+                        In Cart ({cartQuantity})
+                      </span>
                       <span className="sm:hidden">In Cart</span>
                     </span>
                   ) : (

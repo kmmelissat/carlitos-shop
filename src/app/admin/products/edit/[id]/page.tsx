@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@/store";
+import { useAuthStore } from "@/store";
 import { UserRole, Product } from "@/types";
 import { getProductById } from "@/lib/api";
 import ProductForm from "@/components/forms/ProductForm";
 
 const EditProductPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const { id } = useParams();
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
