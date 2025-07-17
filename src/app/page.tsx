@@ -75,27 +75,28 @@ const HomePage = async () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section with Carousel Background */}
-      <div className="relative h-[50vh]">
+      {/* Hero Section with Carousel Background - Full Screen */}
+      <div className="relative h-[75vh] md:h-[80vh]">
         {/* Carousel Background */}
         <HeroCarousel />
 
         {/* Static Content Overlay */}
-        <div className="relative z-10 flex items-center justify-center h-[50vh]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="relative z-10 flex items-center justify-center h-[75vh] md:h-[80vh]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
             <div className="text-center">
-              <div className="mb-4">
+              <div className="mb-6 md:mb-8">
                 <Image
                   src="/carlitos_large.svg"
                   alt="Welcome to CarlitosStore"
                   width={600}
                   height={200}
-                  className="mx-auto drop-shadow-lg"
+                  className="mx-auto drop-shadow-lg max-w-full h-auto"
                   priority
                 />
               </div>
-              <p className="text-xl md:text-2xl mb-8 text-white opacity-90 drop-shadow-md">
-                Your favorite snack store with the best products
+              <p className="text-lg md:text-xl lg:text-2xl mb-8 md:mb-12 text-white opacity-90 drop-shadow-md max-w-4xl mx-auto leading-relaxed">
+                Your favorite snack store with the best products delivered right
+                to your classroom
               </p>
               <div className="max-w-2xl mx-auto">
                 <SearchBar />
@@ -106,26 +107,48 @@ const HomePage = async () => {
       </div>
 
       {/* Categories Section */}
-      <div className="bg-gradient-to-b from-gray-50 to-white py-20">
+      <div className="bg-gradient-to-b from-gray-50 to-white pt-8 md:pt-12 pb-12 md:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Categories
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
               Discover your favorite snacks organized by categories. From sweet
               treats to savory delights, we have something for everyone.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             {categories.map((category) => (
               <Link
                 key={category.id}
                 href={`/products?category=${category.id}`}
-                className="group relative p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
+                className="group relative p-3 md:p-6 bg-white rounded-xl md:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
               >
-                <div className="flex flex-row items-center justify-center gap-4 w-full">
+                {/* Mobile Layout - Vertical Stack */}
+                <div className="flex flex-col items-center text-center space-y-2 md:hidden">
+                  <div
+                    className={`w-10 h-10 ${category.color} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-md`}
+                  >
+                    <span
+                      className={`material-icons-round text-lg ${category.textColor}`}
+                    >
+                      {category.icon}
+                    </span>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900 leading-tight">
+                    {category.name}
+                  </span>
+                  <span className="flex items-center text-xs text-gray-500 group-hover:text-blue-600 transition-colors duration-200">
+                    <span className="material-icons-round text-sm transform group-hover:translate-x-1 transition-transform duration-200">
+                      arrow_forward
+                    </span>
+                  </span>
+                </div>
+
+                {/* Desktop Layout - Horizontal */}
+                <div className="hidden md:flex flex-row items-center justify-center gap-4 w-full">
                   <div
                     className={`w-12 h-12 ${category.color} rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-md`}
                   >
@@ -233,66 +256,82 @@ const HomePage = async () => {
       </div>
 
       {/* Why Choose Us */}
-      <div className="bg-gradient-to-br from-orange-50 via-white to-red-50 py-20">
+      <div className="bg-gradient-to-br from-orange-50 via-white to-red-50 py-12 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="flex items-center justify-center mb-6">
+          <div className="text-center mb-8 md:mb-16">
+            <div className="flex items-center justify-center mb-4 md:mb-6">
               <div className="relative">
-                <span className="material-icons-round text-5xl text-orange-600 mr-4 animate-pulse">
+                <span className="material-icons-round text-3xl md:text-5xl text-orange-600 mr-2 md:mr-4 animate-pulse">
                   favorite
                 </span>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+                <div className="absolute -top-1 -right-1 w-2 h-2 md:w-3 md:h-3 bg-red-500 rounded-full animate-ping"></div>
               </div>
-              <h2 className="text-5xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent">
                 Why Choose CarlitosStore?
               </h2>
             </div>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               We're not just another snack store - we're your campus companion
               for delicious treats and exceptional service
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="group text-center p-8 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
-              <div className="relative mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <span className="material-icons-round text-3xl text-white">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+            <div className="group text-center p-4 md:p-8 bg-white rounded-2xl md:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
+              <div className="relative mb-4 md:mb-6">
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <span className="material-icons-round text-xl md:text-3xl text-white">
                     verified
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-4 group-hover:text-green-600 transition-colors">
                 Premium Quality
               </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Every product is carefully selected and quality-tested to ensure
-                you get only the best snacks and treats
+              <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-2 md:mb-0">
+                <span className="hidden md:inline">
+                  Every product is carefully selected and quality-tested to
+                  ensure you get only the best snacks and treats
+                </span>
+                <span className="md:hidden">
+                  Quality-tested snacks and treats you can trust
+                </span>
               </p>
-              <div className="mt-4 flex items-center justify-center text-sm text-green-600 font-semibold">
+              <div className="mt-2 md:mt-4 flex items-center justify-center text-xs md:text-sm text-green-600 font-semibold">
                 <span className="material-icons-round text-sm mr-1">
                   trending_up
                 </span>
-                100% Quality Guaranteed
+                <span className="hidden sm:inline">
+                  100% Quality Guaranteed
+                </span>
+                <span className="sm:hidden">Quality Guaranteed</span>
               </div>
             </div>
 
-            <div className="group text-center p-8 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
-              <div className="relative mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <span className="material-icons-round text-3xl text-white">
+            <div className="group text-center p-4 md:p-8 bg-white rounded-2xl md:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
+              <div className="relative mb-4 md:mb-6">
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <span className="material-icons-round text-xl md:text-3xl text-white">
                     local_shipping
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
-                Lightning Fast Delivery
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-4 group-hover:text-blue-600 transition-colors">
+                <span className="hidden md:inline">
+                  Lightning Fast Delivery
+                </span>
+                <span className="md:hidden">Fast Delivery</span>
               </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Get your favorite snacks delivered to your classroom in minutes,
-                not hours. Campus-wide coverage!
+              <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-2 md:mb-0">
+                <span className="hidden md:inline">
+                  Get your favorite snacks delivered to your classroom in
+                  minutes, not hours. Campus-wide coverage!
+                </span>
+                <span className="md:hidden">
+                  Delivered to your classroom in minutes
+                </span>
               </p>
-              <div className="mt-4 flex items-center justify-center text-sm text-blue-600 font-semibold">
+              <div className="mt-2 md:mt-4 flex items-center justify-center text-xs md:text-sm text-blue-600 font-semibold">
                 <span className="material-icons-round text-sm mr-1">
                   schedule
                 </span>
@@ -300,22 +339,28 @@ const HomePage = async () => {
               </div>
             </div>
 
-            <div className="group text-center p-8 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
-              <div className="relative mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <span className="material-icons-round text-3xl text-white">
+            <div className="group text-center p-4 md:p-8 bg-white rounded-2xl md:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
+              <div className="relative mb-4 md:mb-6">
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-purple-400 to-pink-600 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <span className="material-icons-round text-xl md:text-3xl text-white">
                     payments
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">
-                Best Prices Guaranteed
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-4 group-hover:text-purple-600 transition-colors">
+                <span className="hidden md:inline">Best Prices Guaranteed</span>
+                <span className="md:hidden">Best Prices</span>
               </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Student-friendly prices with regular discounts and special
-                offers. Quality snacks that won't break the bank!
+              <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-2 md:mb-0">
+                <span className="hidden md:inline">
+                  Student-friendly prices with regular discounts and special
+                  offers. Quality snacks that won't break the bank!
+                </span>
+                <span className="md:hidden">
+                  Student-friendly prices with great discounts
+                </span>
               </p>
-              <div className="mt-4 flex items-center justify-center text-sm text-purple-600 font-semibold">
+              <div className="mt-2 md:mt-4 flex items-center justify-center text-xs md:text-sm text-purple-600 font-semibold">
                 <span className="material-icons-round text-sm mr-1">
                   local_offer
                 </span>
@@ -323,22 +368,27 @@ const HomePage = async () => {
               </div>
             </div>
 
-            <div className="group text-center p-8 bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
-              <div className="relative mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-600 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <span className="material-icons-round text-3xl text-white">
+            <div className="group text-center p-4 md:p-8 bg-white rounded-2xl md:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 md:hover:-translate-y-2 border-2 border-orange-100 hover:border-orange-300">
+              <div className="relative mb-4 md:mb-6">
+                <div className="w-12 h-12 md:w-20 md:h-20 bg-gradient-to-br from-orange-400 to-red-600 rounded-xl md:rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <span className="material-icons-round text-xl md:text-3xl text-white">
                     support_agent
                   </span>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-orange-600 transition-colors">
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 md:mb-4 group-hover:text-orange-600 transition-colors">
                 Personal Touch
               </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Meet Carlitos himself! We're not a faceless corporation - we're
-                your friendly campus snack buddy
+              <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-2 md:mb-0">
+                <span className="hidden md:inline">
+                  Meet Carlitos himself! We're not a faceless corporation -
+                  we're your friendly campus snack buddy
+                </span>
+                <span className="md:hidden">
+                  Meet Carlitos - your friendly campus snack buddy
+                </span>
               </p>
-              <div className="mt-4 flex items-center justify-center text-sm text-orange-600 font-semibold">
+              <div className="mt-2 md:mt-4 flex items-center justify-center text-xs md:text-sm text-orange-600 font-semibold">
                 <span className="material-icons-round text-sm mr-1">
                   person
                 </span>

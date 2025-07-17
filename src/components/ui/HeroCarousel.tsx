@@ -28,7 +28,7 @@ const HeroCarousel = () => {
         pauseOnHover={false}
         pauseOnFocus={false}
       >
-        <div className="relative h-[50vh]">
+        <div className="relative h-[75vh] md:h-[80vh]">
           <Image
             src="/esen-1.jpg"
             alt="ESEN Campus - Image 1"
@@ -36,25 +36,25 @@ const HeroCarousel = () => {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         </div>
-        <div className="relative h-[50vh]">
+        <div className="relative h-[75vh] md:h-[80vh]">
           <Image
             src="/esen-2.jpg"
             alt="ESEN Campus - Image 2"
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         </div>
-        <div className="relative h-[50vh]">
+        <div className="relative h-[75vh] md:h-[80vh]">
           <Image
             src="/carlitos.jpeg"
             alt="Carlitos Store - Image 3"
             fill
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         </div>
       </Carousel>
     </div>

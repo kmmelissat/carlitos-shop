@@ -73,15 +73,15 @@ const ProductsPage: React.FC<ProductsPageProps> = async ({ searchParams }) => {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-28 md:pt-32">
       {/* Header */}
       <div className="shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
               All Products
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm md:text-base">
               Discover all our amazing snacks and treats
             </p>
           </div>
@@ -89,7 +89,7 @@ const ProductsPage: React.FC<ProductsPageProps> = async ({ searchParams }) => {
       </div>
 
       {/* Products Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
         <Suspense fallback={<div>Loading products...</div>}>
           <ProductsClient
             products={paginatedProducts}

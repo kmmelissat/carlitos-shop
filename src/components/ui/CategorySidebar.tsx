@@ -27,7 +27,11 @@ const categories = [
     name: "Dried Fruits",
     icon: "local_florist",
   },
-  { id: ProductCategory.HEALTHY, name: "Healthy Snacks", icon: "health_and_safety" },
+  {
+    id: ProductCategory.HEALTHY,
+    name: "Healthy Snacks",
+    icon: "health_and_safety",
+  },
   { id: ProductCategory.OTHER, name: "Other", icon: "category" },
 ];
 
@@ -77,8 +81,8 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
 
   // Categories Sidebar Component
   const SidebarContent = () => (
-    <div className="bg-white rounded-lg shadow-sm p-6 h-fit sticky top-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 h-fit lg:sticky lg:top-6">
+      <div className="flex items-center justify-between mb-4 md:mb-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center">
           <span className="material-icons-round text-orange-600 mr-2">
             category
@@ -90,11 +94,11 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
         </span>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2 md:space-y-3">
         {/* All Categories Card */}
         <button
           onClick={() => onCategoryFilter("")}
-          className={`w-full p-3 rounded-xl border-2 transition-all duration-200 ${
+          className={`w-full p-2 md:p-3 rounded-xl border-2 transition-all duration-200 ${
             !searchParams.category
               ? "bg-gradient-to-r from-orange-500 to-red-500 text-white border-orange-500 shadow-lg"
               : "bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 border-gray-200 hover:from-gray-100 hover:to-gray-200 hover:shadow-md"
@@ -102,12 +106,12 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
         >
           <div className="flex items-center">
             <div
-              className={`w-10 h-10 rounded-lg mr-3 flex items-center justify-center ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-lg mr-2 md:mr-3 flex items-center justify-center ${
                 !searchParams.category ? "bg-white/20" : "bg-white shadow-sm"
               }`}
             >
               <span
-                className={`material-icons-round text-lg ${
+                className={`material-icons-round text-base md:text-lg ${
                   !searchParams.category ? "text-white" : "text-gray-600"
                 }`}
               >
@@ -126,7 +130,7 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
           <button
             key={category.id}
             onClick={() => onCategoryFilter(category.id)}
-            className={`w-full p-3 rounded-xl border-2 transition-all duration-200 ${
+            className={`w-full p-2 md:p-3 rounded-xl border-2 transition-all duration-200 ${
               searchParams.category === category.id
                 ? "bg-gradient-to-r from-orange-500 to-red-500 text-white border-orange-500 shadow-lg"
                 : `${getCategoryColor(
@@ -136,14 +140,14 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
           >
             <div className="flex items-center">
               <div
-                className={`w-10 h-10 rounded-lg mr-3 flex items-center justify-center ${
+                className={`w-8 h-8 md:w-10 md:h-10 rounded-lg mr-2 md:mr-3 flex items-center justify-center ${
                   searchParams.category === category.id
                     ? "bg-white/20"
                     : "bg-white shadow-sm"
                 }`}
               >
                 <span
-                  className={`material-icons-round text-lg ${
+                  className={`material-icons-round text-base md:text-lg ${
                     searchParams.category === category.id
                       ? "text-white"
                       : "text-current"
@@ -188,16 +192,20 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
           </span>
         </button>
 
-        {/* Mobile Categories Dropdown */}
-        {showMobileSidebar && (
-          <div className="mt-2">
-            <SidebarContent />
-          </div>
-        )}
+        {/* Mobile Categories Dropdown - Animated */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+            showMobileSidebar
+              ? "max-h-screen opacity-100 mt-2"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          <SidebarContent />
+        </div>
       </div>
 
       {/* Desktop Categories Sidebar */}
-      <div className="hidden lg:block w-64 flex-shrink-0">
+      <div className="hidden lg:block">
         <SidebarContent />
       </div>
     </>

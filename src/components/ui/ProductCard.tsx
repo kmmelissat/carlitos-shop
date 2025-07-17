@@ -120,15 +120,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
   if (isFeatured) {
     return (
       <div
-        className={`group bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border-2 border-orange-100 hover:border-orange-300 hover:-translate-y-2 relative animate-scale-in ${className}`}
+        className={`group bg-white rounded-2xl md:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border-2 border-orange-100 hover:border-orange-300 hover:-translate-y-1 md:hover:-translate-y-2 relative animate-scale-in ${className}`}
       >
         {/* Featured Glow Effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-orange-400/10 via-transparent to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
         <Link href={`/products/${product.id}`}>
           <div className="relative overflow-hidden">
-            {/* Product Image */}
-            <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50">
+            {/* Product Image - Mobile Optimized */}
+            <div className="aspect-[4/3] md:aspect-square relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50">
               <img
                 src={product.images[0] || placeholderImage}
                 alt={product.name}
@@ -141,76 +141,83 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {/* Enhanced gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-              {/* Shimmer effect on hover */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out animate-shimmer"></div>
+              {/* Shimmer effect on hover - Desktop only */}
+              <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out animate-shimmer"></div>
             </div>
 
-            {/* Enhanced Featured Badge */}
+            {/* Mobile-Optimized Featured Badge */}
             {product.featured && (
-              <div className="absolute top-4 left-4 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-xl flex items-center animate-pulse animate-glow">
-                <span className="material-icons-round text-lg mr-2">star</span>
-                Featured
-                <div className="ml-2 w-2 h-2 bg-white rounded-full animate-ping"></div>
+              <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white px-2 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-xl flex items-center animate-pulse animate-glow">
+                <span className="material-icons-round text-sm md:text-lg mr-1 md:mr-2">star</span>
+                <span className="hidden sm:inline">Featured</span>
+                <span className="sm:hidden">★</span>
+                <div className="ml-1 md:ml-2 w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full animate-ping"></div>
               </div>
             )}
 
-            {/* Enhanced Category Badge */}
-            <div className="absolute bottom-4 right-4">
+            {/* Mobile-Optimized Category Badge */}
+            <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4">
               <span
-                className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold border-2 shadow-lg backdrop-blur-sm ${getCategoryColor(
+                className={`inline-flex items-center px-2 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-bold border-2 shadow-lg backdrop-blur-sm ${getCategoryColor(
                   product.category
                 )} group-hover:scale-110 transition-transform duration-300 animate-float`}
               >
-                {product.category.charAt(0).toUpperCase() +
-                  product.category.slice(1).replace("_", " ")}
+                <span className="hidden sm:inline">
+                  {product.category.charAt(0).toUpperCase() +
+                    product.category.slice(1).replace("_", " ")}
+                </span>
+                <span className="sm:hidden">
+                  {product.category.charAt(0).toUpperCase()}
+                </span>
               </span>
             </div>
 
-            {/* Stock Badge */}
+            {/* Mobile-Optimized Stock Badge */}
             {product.stock === 0 && (
               <div className="absolute inset-0 bg-black/70 flex items-center justify-center backdrop-blur-sm">
                 <div className="text-center">
-                  <span className="material-icons-round text-white text-5xl mb-3">
+                  <span className="material-icons-round text-white text-3xl md:text-5xl mb-2 md:mb-3">
                     inventory_2
                   </span>
-                  <span className="text-white text-xl font-bold block">
+                  <span className="text-white text-sm md:text-xl font-bold block">
                     Out of Stock
                   </span>
                 </div>
               </div>
             )}
 
-            {/* Enhanced Low Stock Warning */}
+            {/* Mobile-Optimized Low Stock Warning */}
             {product.stock > 0 && product.stock < 10 && (
-              <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-xl flex items-center animate-bounce">
-                <span className="material-icons-round text-sm mr-1">
+              <div className="absolute top-2 right-2 md:top-4 md:right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-2 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm font-bold shadow-xl flex items-center animate-bounce">
+                <span className="material-icons-round text-xs md:text-sm mr-1">
                   warning
                 </span>
-                Low Stock
+                <span className="hidden sm:inline">Low Stock</span>
+                <span className="sm:hidden">!</span>
               </div>
             )}
           </div>
         </Link>
 
-        {/* Enhanced Product Info */}
-        <div className="p-6">
+        {/* Mobile-Optimized Product Info */}
+        <div className="p-3 md:p-6">
           <Link href={`/products/${product.id}`}>
-            <h3 className="text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2 mb-3 group-hover:text-orange-600">
+            <h3 className="text-base md:text-xl font-bold text-gray-900 hover:text-orange-600 transition-colors line-clamp-2 mb-2 md:mb-3 group-hover:text-orange-600">
               {product.name}
             </h3>
           </Link>
 
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+          <p className="text-gray-600 text-xs md:text-sm mb-3 md:mb-4 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
 
-          {/* Enhanced Rating */}
-          <div className="flex items-center mb-4">
+          {/* Mobile-Optimized Rating */}
+          <div className="flex items-center mb-3 md:mb-4">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
                 <svg
                   key={i}
-                  className={`w-5 h-5 ${
+                  className={`w-3 h-3 md:w-5 md:h-5 ${
                     i < Math.floor(product.rating)
                       ? "text-yellow-400 fill-current"
                       : "text-gray-300"
@@ -221,50 +228,53 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 </svg>
               ))}
             </div>
-            <span className="text-gray-600 text-sm ml-2 font-semibold">
+            <span className="text-gray-600 text-xs md:text-sm ml-1 md:ml-2 font-semibold">
               {product.rating.toFixed(1)}
-              <span className="text-gray-400 font-normal">
+              <span className="text-gray-400 font-normal hidden sm:inline">
                 ({product.reviewCount} reviews)
               </span>
             </span>
           </div>
 
-          {/* Enhanced Price and Stock */}
-          <div className="flex items-center justify-between mb-5">
+          {/* Mobile-Optimized Price and Stock */}
+          <div className="flex items-center justify-between mb-3 md:mb-5">
             <div className="flex items-baseline">
-              <span className="text-3xl font-bold animate-gradient-text">
+              <span className="text-lg md:text-3xl font-bold animate-gradient-text">
                 {formatPrice(product.price)}
               </span>
               {product.weight && (
-                <span className="text-gray-500 text-sm ml-2">
+                <span className="text-gray-500 text-xs md:text-sm ml-1 md:ml-2">
                   / {product.weight}g
                 </span>
               )}
             </div>
             <div className="flex items-center">
               <span
-                className={`text-sm font-bold ${getStockColor()} flex items-center px-3 py-1 rounded-full bg-white shadow-sm`}
+                className={`text-xs md:text-sm font-bold ${getStockColor()} flex items-center px-2 md:px-3 py-1 rounded-full bg-white shadow-sm`}
               >
-                <span className="material-icons-round text-sm mr-1">
+                <span className="material-icons-round text-xs md:text-sm mr-1">
                   {product.stock === 0
                     ? "inventory_2"
                     : product.stock < 10
                     ? "warning"
                     : "check_circle"}
                 </span>
-                {stockStatus}
+                <span className="hidden sm:inline">{stockStatus}</span>
+                <span className="sm:hidden">
+                  {product.stock === 0 ? "0" : product.stock < 10 ? "!" : "✓"}
+                </span>
               </span>
             </div>
           </div>
 
-          {/* Enhanced Add to Cart Button */}
+          {/* Mobile-Optimized Add to Cart Button */}
           {showAddToCart && (
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {product.stock > 0 ? (
                 <button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0 || isAdding}
-                  className={`w-full py-4 px-6 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-xl hover:shadow-2xl relative overflow-hidden hover-lift ${
+                  className={`w-full py-2 md:py-4 px-3 md:px-6 rounded-xl md:rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg md:shadow-xl hover:shadow-xl md:hover:shadow-2xl relative overflow-hidden hover-lift text-sm md:text-base ${
                     !user
                       ? "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 shadow-blue-200"
                       : isInCartNow
@@ -276,60 +286,66 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 >
                   {!user ? (
                     <span className="flex items-center justify-center">
-                      <span className="material-icons-round text-xl mr-2">
+                      <span className="material-icons-round text-base md:text-xl mr-1 md:mr-2">
                         login
                       </span>
-                      Sign In to Add to Cart
+                      <span className="hidden sm:inline">Sign In to Add to Cart</span>
+                      <span className="sm:hidden">Sign In</span>
                     </span>
                   ) : isAdding ? (
                     <span className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 md:h-6 md:w-6 border-b-2 border-white mr-1 md:mr-2"></div>
                       Adding...
                     </span>
                   ) : isInCartNow ? (
                     <span className="flex items-center justify-center">
-                      <span className="material-icons-round text-xl mr-2">
+                      <span className="material-icons-round text-base md:text-xl mr-1 md:mr-2">
                         check_circle
                       </span>
-                      In Cart ({cartQuantity})
+                      <span className="hidden sm:inline">In Cart ({cartQuantity})</span>
+                      <span className="sm:hidden">In Cart</span>
                     </span>
                   ) : (
                     <span className="flex items-center justify-center">
-                      <span className="material-icons-round text-xl mr-2">
+                      <span className="material-icons-round text-base md:text-xl mr-1 md:mr-2">
                         add_shopping_cart
                       </span>
-                      Add to Cart
+                      <span className="hidden sm:inline">Add to Cart</span>
+                      <span className="sm:hidden">Add</span>
                     </span>
                   )}
                 </button>
               ) : (
                 <button
                   disabled
-                  className="w-full py-4 px-6 rounded-2xl font-bold bg-gray-200 text-gray-500 cursor-not-allowed border-2 border-gray-300"
+                  className="w-full py-2 md:py-4 px-3 md:px-6 rounded-xl md:rounded-2xl font-bold bg-gray-200 text-gray-500 cursor-not-allowed border-2 border-gray-300 text-sm md:text-base"
                 >
                   <span className="flex items-center justify-center">
-                    <span className="material-icons-round text-xl mr-2">
+                    <span className="material-icons-round text-base md:text-xl mr-1 md:mr-2">
                       block
                     </span>
-                    Out of Stock
+                    <span className="hidden sm:inline">Out of Stock</span>
+                    <span className="sm:hidden">Sold Out</span>
                   </span>
                 </button>
               )}
 
-              {/* Enhanced Quick actions */}
+              {/* Mobile-Optimized Quick actions */}
               {isInCartNow && user && (
-                <div className="flex space-x-3 animate-fadeIn">
+                <div className="flex space-x-2 md:space-x-3 animate-fadeIn">
                   <Link
                     href="/cart"
-                    className="flex-1 py-3 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-xl hover:from-gray-200 hover:to-gray-300 transition-all duration-200 text-center text-sm font-bold shadow-md hover:shadow-lg"
+                    className="flex-1 py-2 md:py-3 px-2 md:px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 rounded-lg md:rounded-xl hover:from-gray-200 hover:to-gray-300 transition-all duration-200 text-center text-xs md:text-sm font-bold shadow-md hover:shadow-lg"
                   >
-                    View Cart
+                    <span className="hidden sm:inline">View Cart</span>
+                    <span className="sm:hidden">Cart</span>
                   </Link>
                   <Link
                     href={`/products/${product.id}`}
-                    className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 rounded-xl hover:from-blue-200 hover:to-purple-200 transition-all duration-200 text-center text-sm font-bold shadow-md hover:shadow-lg"
+                    className="flex-1 py-2 md:py-3 px-2 md:px-4 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 rounded-lg md:rounded-xl hover:from-blue-200 hover:to-purple-200 transition-all duration-200 text-center text-xs md:text-sm font-bold shadow-md hover:shadow-lg"
                   >
-                    View Details
+                    <span className="hidden sm:inline">View Details</span>
+                    <span className="sm:hidden">Details</span>
                   </Link>
                 </div>
               )}
