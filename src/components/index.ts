@@ -17,6 +17,7 @@ export { default as DeliveryOptionSection } from "./forms/DeliveryOptionSection"
 // Admin Components
 export { default as AdminGuard } from "./admin/AdminGuard";
 export { default as ProductsTable } from "./admin/ProductsTable";
+export { default as OrdersTable } from "./admin/OrdersTable";
 
 // Profile Components
 export { default as OrdersSection } from "../app/profile/OrdersSection";

@@ -147,3 +147,22 @@ export const createOrder = async (orderData: any): Promise<string> => {
     );
   }
 };
+
+// Update order status
+export const updateOrderStatus = async (
+  orderId: string,
+  newStatus: string,
+  notes?: string
+): Promise<void> => {
+  try {
+    const orderRef = doc(db, "orders", orderId);
+
+    await updateDoc(orderRef, {
+      "status.status": newStatus,
+      "status.updatedAt": new Date(),
+      "status.notes": notes || "",
+    });
+  } catch (error: any) {
+    throw new Error(error.message || "Error updating order status");
+  }
+};
