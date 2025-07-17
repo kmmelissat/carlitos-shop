@@ -7,6 +7,7 @@ export { default as ClientWrapper } from "./layout/ClientWrapper";
 export { default as ProductCard } from "./ui/ProductCard";
 export { default as CategorySidebar } from "./ui/CategorySidebar";
 export { default as SearchBar } from "./ui/SearchBar";
+export { default as HeroCarousel } from "./ui/HeroCarousel";
 export { default as Toast } from "./ui/Toast";
 
 // Form Components
@@ -18,6 +19,7 @@ export { default as DeliveryOptionSection } from "./forms/DeliveryOptionSection"
 export { default as AdminGuard } from "./admin/AdminGuard";
 export { default as ProductsTable } from "./admin/ProductsTable";
 export { default as OrdersTable } from "./admin/OrdersTable";
+export { default as CustomersManagement } from "./admin/CustomersManagement";
 export { default as OrdersManagement } from "./admin/OrdersManagement";
 
 // Profile Components

@@ -538,18 +538,9 @@ export const getWeeklyComparisonServer = async () => {
         : ((thisWeekOrders - lastWeekOrders) / lastWeekOrders) * 100;
 
     return {
-      thisWeek: {
-        revenue: thisWeekRevenue,
-        orders: thisWeekOrders,
-      },
-      lastWeek: {
-        revenue: lastWeekRevenue,
-        orders: lastWeekOrders,
-      },
-      changes: {
-        revenue: Math.round(revenueChange * 100) / 100,
-        orders: Math.round(ordersChange * 100) / 100,
-      },
+      thisWeek: { revenue: thisWeekRevenue, orders: thisWeekOrders },
+      lastWeek: { revenue: lastWeekRevenue, orders: lastWeekOrders },
+      changes: { revenue: revenueChange, orders: ordersChange },
     };
   } catch (error) {
     console.error("Error calculating weekly comparison:", error);
@@ -557,6 +548,165 @@ export const getWeeklyComparisonServer = async () => {
       thisWeek: { revenue: 0, orders: 0 },
       lastWeek: { revenue: 0, orders: 0 },
       changes: { revenue: 0, orders: 0 },
+    };
+  }
+};
+
+// Get customer analytics and insights
+export const getCustomerAnalyticsServer = async () => {
+  try {
+    const [users, orders] = await Promise.all([
+      getUsersServer(),
+      getOrdersServer(),
+    ]);
+
+    // Calculate customer lifetime values
+    const customerStats = users.map((user) => {
+      const customerOrders = orders.filter((order) => order.userId === user.id);
+      const completedOrders = customerOrders.filter(
+        (order) => order.status?.status === "completed"
+      );
+
+      const totalSpent = completedOrders.reduce(
+        (sum, order) => sum + (order.total || 0),
+        0
+      );
+      const totalOrders = customerOrders.length;
+      const averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
+
+      const lastOrderDate =
+        customerOrders.length > 0
+          ? new Date(
+              Math.max(
+                ...customerOrders.map((order) =>
+                  new Date(order.createdAt).getTime()
+                )
+              )
+            )
+          : null;
+
+      // Calculate customer activity
+      const daysSinceLastOrder = lastOrderDate
+        ? Math.floor(
+            (new Date().getTime() - lastOrderDate.getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        : Infinity;
+
+      const daysSinceCreated = Math.floor(
+        (new Date().getTime() - new Date(user.createdAt).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      // Categorize customers
+      let customerType;
+      if (daysSinceCreated <= 7) {
+        customerType = "new";
+      } else if (totalSpent > 100 && daysSinceLastOrder <= 30) {
+        customerType = "vip";
+      } else if (daysSinceLastOrder <= 30) {
+        customerType = "active";
+      } else if (totalOrders > 0) {
+        customerType = "inactive";
+      } else {
+        customerType = "prospect";
+      }
+
+      return {
+        ...user,
+        totalOrders,
+        totalSpent,
+        averageOrderValue,
+        lastOrderDate,
+        daysSinceLastOrder,
+        customerType,
+      };
+    });
+
+    // Calculate overall metrics
+    const totalCustomers = users.length;
+    const activeCustomers = customerStats.filter(
+      (c) => c.daysSinceLastOrder <= 30
+    ).length;
+    const newCustomers = customerStats.filter(
+      (c) => c.customerType === "new"
+    ).length;
+    const vipCustomers = customerStats.filter(
+      (c) => c.customerType === "vip"
+    ).length;
+
+    const totalRevenue = customerStats.reduce(
+      (sum, c) => sum + c.totalSpent,
+      0
+    );
+    const averageCustomerValue =
+      totalCustomers > 0 ? totalRevenue / totalCustomers : 0;
+
+    // Top customers by spending
+    const topCustomers = customerStats
+      .filter((c) => c.totalSpent > 0)
+      .sort((a, b) => b.totalSpent - a.totalSpent)
+      .slice(0, 10);
+
+    // Customer acquisition trend (last 30 days)
+    const last30Days = Array.from({ length: 30 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (29 - i));
+      return {
+        date: date.toISOString().split("T")[0],
+        newCustomers: 0,
+      };
+    });
+
+    users.forEach((user) => {
+      const userDate = new Date(user.createdAt).toISOString().split("T")[0];
+      const dayData = last30Days.find((day) => day.date === userDate);
+      if (dayData) {
+        dayData.newCustomers += 1;
+      }
+    });
+
+    return {
+      summary: {
+        totalCustomers,
+        activeCustomers,
+        newCustomers,
+        vipCustomers,
+        totalRevenue,
+        averageCustomerValue,
+      },
+      topCustomers,
+      acquisitionTrend: last30Days,
+      customerSegments: {
+        new: customerStats.filter((c) => c.customerType === "new").length,
+        active: customerStats.filter((c) => c.customerType === "active").length,
+        inactive: customerStats.filter((c) => c.customerType === "inactive")
+          .length,
+        vip: customerStats.filter((c) => c.customerType === "vip").length,
+        prospect: customerStats.filter((c) => c.customerType === "prospect")
+          .length,
+      },
+    };
+  } catch (error) {
+    console.error("Error calculating customer analytics:", error);
+    return {
+      summary: {
+        totalCustomers: 0,
+        activeCustomers: 0,
+        newCustomers: 0,
+        vipCustomers: 0,
+        totalRevenue: 0,
+        averageCustomerValue: 0,
+      },
+      topCustomers: [],
+      acquisitionTrend: [],
+      customerSegments: {
+        new: 0,
+        active: 0,
+        inactive: 0,
+        vip: 0,
+        prospect: 0,
+      },
     };
   }
 };
