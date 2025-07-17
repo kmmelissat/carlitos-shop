@@ -3,11 +3,25 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Input, Select, Button } from "antd";
+import {
+  Input,
+  Select,
+  Button,
+  Table,
+  Tag,
+  Space,
+  Card,
+  Typography,
+  Tooltip,
+  Empty,
+} from "antd";
+import { EyeOutlined, ShoppingOutlined } from "@ant-design/icons";
 import { updateOrderStatus } from "@/lib/api";
+import type { ColumnsType } from "antd/es/table";
 
 const { Search } = Input;
 const { Option } = Select;
+const { Title } = Typography;
 
 interface Order {
   id: string;
@@ -33,14 +47,19 @@ interface Order {
 
 interface OrdersTableProps {
   initialOrders: Order[];
+  onOrdersUpdate?: (orders: Order[]) => void;
 }
 
-const OrdersTable: React.FC<OrdersTableProps> = ({ initialOrders }) => {
+const OrdersTable: React.FC<OrdersTableProps> = ({
+  initialOrders,
+  onOrdersUpdate,
+}) => {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>(initialOrders);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [updateLoading, setUpdateLoading] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const formatPrice = (price: number): string => {
     return new Intl.NumberFormat("en-US", {
@@ -49,43 +68,40 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ initialOrders }) => {
     }).format(price);
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200";
-      case "pending":
-        return "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200";
-      case "processing":
-        return "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200";
-      case "cancelled":
-        return "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200";
-      default:
-        return "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200";
-    }
+  const getStatusTag = (status: string) => {
+    const statusConfig = {
+      completed: { color: "green", text: "Completed" },
+      pending: { color: "gold", text: "Pending" },
+      processing: { color: "blue", text: "Processing" },
+      cancelled: { color: "red", text: "Cancelled" },
+    };
+
+    const config = statusConfig[status as keyof typeof statusConfig] || {
+      color: "default",
+      text: status,
+    };
+    return <Tag color={config.color}>{config.text}</Tag>;
   };
 
-  const getPaymentMethodIcon = (type: string) => {
-    switch (type) {
-      case "cash_on_delivery":
-        return "💵";
-      case "card":
-        return "💳";
-      case "transfer":
-        return "🏦";
-      default:
-        return "💰";
-    }
+  const getPaymentMethodText = (type: string) => {
+    if (!type) return "💰 Not specified";
+
+    const paymentTypes = {
+      cash_on_delivery: "💵 Cash on Delivery",
+      card: "💳 Credit Card",
+      transfer: "🏦 Bank Transfer",
+    };
+    return paymentTypes[type as keyof typeof paymentTypes] || `💰 ${type}`;
   };
 
-  const getDeliveryIcon = (type: string) => {
-    switch (type) {
-      case "deliver_to_location":
-        return "🚚";
-      case "pickup":
-        return "🏪";
-      default:
-        return "📦";
-    }
+  const getDeliveryText = (type: string) => {
+    if (!type) return "📦 Not specified";
+
+    const deliveryTypes = {
+      deliver_to_location: "🚚 Delivery",
+      pickup: "🏪 Store Pickup",
+    };
+    return deliveryTypes[type as keyof typeof deliveryTypes] || `📦 ${type}`;
   };
 
   // Filter and search functionality
@@ -127,11 +143,16 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ initialOrders }) => {
     orderId: string,
     newStatus: string
   ) => {
+    console.log(`Updating order ${orderId} to status: ${newStatus}`);
+
     try {
       setUpdateLoading(orderId);
 
       // Make API call to update the order status
       await updateOrderStatus(orderId, newStatus);
+      console.log(
+        `Successfully updated order ${orderId} status to ${newStatus}`
+      );
 
       // Update local state after successful API call
       const updatedOrders = orders.map((order) =>
@@ -147,65 +168,220 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ initialOrders }) => {
           : order
       );
 
+      // Update both orders and filteredOrders states
       setOrders(updatedOrders);
-      applyFilters(searchTerm, statusFilter);
+
+      // Notify parent component about the orders update for stats recalculation
+      if (onOrdersUpdate) {
+        onOrdersUpdate(updatedOrders);
+      }
+
+      // Apply filters to the updated orders to update filteredOrders
+      let filtered = updatedOrders;
+
+      // Apply status filter
+      if (statusFilter !== "all") {
+        filtered = filtered.filter(
+          (order) => order.status?.status === statusFilter
+        );
+      }
+
+      // Apply search filter
+      if (searchTerm.trim()) {
+        const search = searchTerm.toLowerCase();
+        filtered = filtered.filter(
+          (order) =>
+            order.id.toLowerCase().includes(search) ||
+            order.userName.toLowerCase().includes(search) ||
+            order.userEmail.toLowerCase().includes(search)
+        );
+      }
+
+      setFilteredOrders(filtered);
+
+      console.log(`Updated order ${orderId} locally. New status: ${newStatus}`);
     } catch (error) {
       console.error("Error updating order status:", error);
       // Show error message to user
-      alert("Failed to update order status. Please try again.");
+      alert(
+        `Failed to update order status: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setUpdateLoading(null);
     }
   };
 
+  const columns: ColumnsType<Order> = [
+    {
+      title: "Order",
+      dataIndex: "id",
+      key: "order",
+      width: 140,
+      render: (id: string, record: Order) => (
+        <div>
+          <div className="font-semibold text-gray-900">
+            #{id.slice(-6).toUpperCase()}
+          </div>
+          <div className="text-xs text-gray-500">
+            {format(record.createdAt, "MMM d, HH:mm")}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Customer",
+      key: "customer",
+      width: 200,
+      render: (_, record: Order) => (
+        <div>
+          <div className="font-medium text-gray-900">{record.userName}</div>
+          <div className="text-sm text-gray-500">{record.userEmail}</div>
+        </div>
+      ),
+    },
+    {
+      title: "Items",
+      dataIndex: "items",
+      key: "items",
+      width: 80,
+      align: "center",
+      render: (items: any[]) => (
+        <div className="flex items-center justify-center">
+          <ShoppingOutlined className="mr-1 text-gray-400" />
+          <span>{items?.length || 0}</span>
+        </div>
+      ),
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      width: 100,
+      align: "right",
+      render: (total: number) => (
+        <span className="font-semibold">{formatPrice(total)}</span>
+      ),
+      sorter: (a, b) => a.total - b.total,
+    },
+    {
+      title: "Payment",
+      dataIndex: "paymentMethod",
+      key: "payment",
+      width: 150,
+      render: (paymentMethod: any) => (
+        <span className="text-sm">
+          {getPaymentMethodText(paymentMethod?.type || "")}
+        </span>
+      ),
+    },
+    {
+      title: "Delivery",
+      dataIndex: "deliveryOption",
+      key: "delivery",
+      width: 120,
+      render: (deliveryOption: any) => (
+        <span className="text-sm">
+          {getDeliveryText(deliveryOption?.type || "")}
+        </span>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 140,
+      render: (status: any, record: Order) => (
+        <Select
+          value={status?.status || "pending"}
+          style={{ width: "100%" }}
+          onChange={(value) => handleUpdateOrderStatus(record.id, value)}
+          loading={updateLoading === record.id}
+          size="small"
+        >
+          <Option value="pending">Pending</Option>
+          <Option value="processing">Processing</Option>
+          <Option value="completed">Completed</Option>
+          <Option value="cancelled">Cancelled</Option>
+        </Select>
+      ),
+      filters: [
+        { text: "Pending", value: "pending" },
+        { text: "Processing", value: "processing" },
+        { text: "Completed", value: "completed" },
+        { text: "Cancelled", value: "cancelled" },
+      ],
+      onFilter: (value, record) => record.status?.status === value,
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "date",
+      width: 100,
+      render: (date: Date) => format(date, "MMM d, yyyy"),
+      sorter: (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      defaultSortOrder: "descend",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      width: 80,
+      fixed: "right",
+      align: "center",
+      render: (_, record: Order) => (
+        <Tooltip title="View Order Details">
+          <Link href={`/orders/${record.id}/confirmation`}>
+            <Button
+              type="text"
+              icon={<EyeOutlined />}
+              size="small"
+              className="text-blue-600 hover:text-blue-800"
+            />
+          </Link>
+        </Tooltip>
+      ),
+    },
+  ];
+
   if (orders.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">All Orders</h3>
-        </div>
+      <Card>
         <div className="text-center py-12">
-          <svg
-            className="w-12 h-12 text-gray-400 mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-            />
-          </svg>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No orders yet
-          </h3>
-          <p className="text-gray-500 mb-4">
-            Orders will appear here once customers start placing them.
-          </p>
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={
+              <div>
+                <Title level={4} className="mb-2">
+                  No orders yet
+                </Title>
+                <p className="text-gray-500">
+                  Orders will appear here once customers start placing them.
+                </p>
+              </div>
+            }
+          />
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
+    <Card
+      title={
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="text-lg font-medium text-gray-900 mb-4 sm:mb-0">
+          <Title level={4} className="mb-0">
             All Orders ({filteredOrders.length})
-          </h3>
-
-          <div className="flex flex-col sm:flex-row gap-4">
+          </Title>
+          <Space className="mt-4 sm:mt-0">
             <Search
               placeholder="Search orders, customers, email..."
               allowClear
-              style={{ width: 250 }}
+              style={{ width: 280 }}
               onSearch={handleSearch}
               onChange={(e) => handleSearch(e.target.value)}
             />
-
             <Select
               value={statusFilter}
               style={{ width: 150 }}
@@ -217,150 +393,38 @@ const OrdersTable: React.FC<OrdersTableProps> = ({ initialOrders }) => {
               <Option value="completed">Completed</Option>
               <Option value="cancelled">Cancelled</Option>
             </Select>
-          </div>
+          </Space>
         </div>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Order
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Customer
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Items
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Total
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Payment
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Delivery
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredOrders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    #{order.id.slice(-6).toUpperCase()}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {format(order.createdAt, "MMM d, HH:mm")}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {order.userName}
-                  </div>
-                  <div className="text-sm text-gray-500">{order.userEmail}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {order.items?.length || 0} items
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {formatPrice(order.total)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="flex items-center">
-                    <span className="mr-2">
-                      {getPaymentMethodIcon(order.paymentMethod?.type)}
-                    </span>
-                    <span className="capitalize">
-                      {order.paymentMethod?.type?.replace("_", " ")}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="flex items-center">
-                    <span className="mr-2">
-                      {getDeliveryIcon(order.deliveryOption?.type)}
-                    </span>
-                    <span className="capitalize">
-                      {order.deliveryOption?.type === "deliver_to_location"
-                        ? "Delivery"
-                        : "Pickup"}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Select
-                    value={order.status?.status || "pending"}
-                    style={{ width: 120 }}
-                    onChange={(value) =>
-                      handleUpdateOrderStatus(order.id, value)
-                    }
-                    loading={updateLoading === order.id}
-                    size="small"
-                  >
-                    <Option value="pending">Pending</Option>
-                    <Option value="processing">Processing</Option>
-                    <Option value="completed">Completed</Option>
-                    <Option value="cancelled">Cancelled</Option>
-                  </Select>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {format(order.createdAt, "MMM d, yyyy")}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex items-center justify-end space-x-2">
-                    <Link
-                      href={`/orders/${order.id}/confirmation`}
-                      className="text-blue-600 hover:text-blue-900"
-                      title="View Order"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    </Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {filteredOrders.length === 0 && searchTerm && (
-        <div className="text-center py-8">
-          <p className="text-gray-500">
-            No orders found matching "{searchTerm}"
-          </p>
-        </div>
-      )}
-    </div>
+      }
+      className="shadow-sm"
+    >
+      <Table<Order>
+        columns={columns}
+        dataSource={filteredOrders}
+        rowKey="id"
+        loading={loading}
+        pagination={{
+          total: filteredOrders.length,
+          pageSize: 10,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} orders`,
+        }}
+        scroll={{ x: 1200 }}
+        size="middle"
+        locale={{
+          emptyText: searchTerm ? (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={`No orders found matching "${searchTerm}"`}
+            />
+          ) : (
+            <Empty description="No orders found" />
+          ),
+        }}
+      />
+    </Card>
   );
 };
 

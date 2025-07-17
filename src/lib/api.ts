@@ -154,15 +154,38 @@ export const updateOrderStatus = async (
   newStatus: string,
   notes?: string
 ): Promise<void> => {
+  console.log(`API: Updating order ${orderId} to status ${newStatus}`);
+
+  if (!orderId) {
+    throw new Error("Order ID is required");
+  }
+
+  if (!newStatus) {
+    throw new Error("New status is required");
+  }
+
   try {
     const orderRef = doc(db, "orders", orderId);
+
+    // First check if the order exists
+    const orderDoc = await getDoc(orderRef);
+    if (!orderDoc.exists()) {
+      throw new Error(`Order with ID ${orderId} not found`);
+    }
+
+    console.log(`API: Order ${orderId} exists, updating status...`);
 
     await updateDoc(orderRef, {
       "status.status": newStatus,
       "status.updatedAt": new Date(),
       "status.notes": notes || "",
     });
+
+    console.log(
+      `API: Successfully updated order ${orderId} status to ${newStatus}`
+    );
   } catch (error: any) {
+    console.error(`API: Error updating order ${orderId}:`, error);
     throw new Error(error.message || "Error updating order status");
   }
 };
