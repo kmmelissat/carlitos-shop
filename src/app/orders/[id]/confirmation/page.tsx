@@ -42,7 +42,7 @@ const OrderConfirmationPage = () => {
         while (attempts < maxAttempts) {
           orderDoc = await getDoc(doc(db, "orders", id));
 
-          if (orderDoc.exists()) {
+        if (orderDoc.exists()) {
             break;
           }
 

@@ -2,7 +2,7 @@
 
 A full-featured e-commerce application built with Next.js 15, TypeScript, and Firebase. Features a beautiful UI, comprehensive admin panel, and seamless shopping experience.
 
-![CARLITOS Logo](public/carlitos-logo.svg)
+<img src="public/carlitos-logo.svg" alt="CARLITOS Logo" width="60" height="60" />
 
 ## 🌟 Live Demo
 
